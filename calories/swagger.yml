@@ -1,0 +1,421 @@
+openapi: 3.0.0
+info:
+  description: This is the OpenAPI file to define the Calories REST API
+  version: 1.0.0
+  title: Calories REST API
+paths:
+  /users:
+    get:
+      operationId: users.read_all
+      tags:
+        - Users
+      summary: Read the entire set of users, sorted by user name
+      parameters:
+        - name: filter
+          in: body
+          description: Filtering for results
+          required: false
+          schema:
+            $ref: '#/components/schemas/Filter'
+      description: Read the entire set of users, sorted by user name
+      responses:
+        "200":
+          description: Successfully read user set operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserWithMeals'
+      security:
+        - jwt: []
+
+    post:
+      operationId: users.create
+      tags:
+        - Users
+      summary: Create a user
+      description: Create a new user
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+        description: User to create
+        required: true
+      responses:
+        "201":
+          description: Successfully created user
+      security:
+        - jwt: []
+
+  "/users/{username}":
+    get:
+      operationId: users.read_one
+      tags:
+        - Users
+      summary: Read one user
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user to get
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully read user from users data operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithMeals'
+        "404":
+          description: User not found
+      security:
+        - jwt: []
+
+    put:
+      operationId: users.update
+      tags:
+        - Users
+      summary: Update an user
+      description: Update an user
+      parameters:
+        - name: username
+          in: path
+          description: username to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+        description: User to update
+        required: true
+      responses:
+        "200":
+          description: Successfully updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+      security:
+        - jwt: []
+
+    delete:
+      operationId: users.delete
+      tags:
+        - Users
+      summary: Delete an user
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted an user
+        "404":
+          description: User not found
+      security:
+        - jwt: []
+
+  /meals:
+    get:
+      operationId: meals.read_all
+      tags:
+        - Meals
+      summary: Read the entire set of meals for all users
+      responses:
+        "200":
+          description: Successfully read entries for all meals operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MealWithUser'
+      security:
+        - jwt: []
+
+  "/users/{username}/meals":
+    get:
+      operationId: meals.read_meals
+      tags:
+        - Meals
+      summary: Read all the meals associated with an user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully read meals for user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Meal'
+      security:
+        - jwt: []
+
+    post:
+      operationId: meals.create
+      tags:
+        - Meals
+      summary: Create a meal associated with a user
+      description: Create a meal associated with a user
+      parameters:
+        - name: username
+          in: path
+          description: Username of the person whose meal to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/Meal'
+        description: Meal to update
+        required: true
+      responses:
+        "201":
+          description: Successfully updated meal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        "404":
+          description: Meal not found
+      security:
+        - jwt: []
+
+  "/users/{username}/meals/{id}":
+    get:
+      operationId: meals.read_one
+      tags:
+        - Meals
+      summary: Read a particular meal associated with a user
+      parameters:
+        - name: username
+          in: path
+          description: Username associated with meal
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Id of the meal
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read meal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        "404":
+          description: Meal not found
+      security:
+        - jwt: []
+
+    put:
+      operationId: meals.update
+      tags:
+        - Meals
+      summary: Update a meal associated with a user
+      description: Update a note associated with a person
+      parameters:
+        - name: username
+          in: path
+          description: Username of the person whose meal to update
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Id of the meal
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/Meal"
+      responses:
+        "200":
+          description: Successfully updated meal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meal'
+        "404":
+          description: Meal not found
+      security:
+        - jwt: []
+
+    delete:
+      operationId: meals.delete
+      tags:
+        - Meals
+      summary: Delete an entry associated with an user
+      parameters:
+        - name: username
+          in: path
+          description: Username associated with meal
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Id of meal
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a meal
+        "404":
+          description: Meal not found
+      security:
+        - jwt: []
+
+  /login/:
+    post:
+      summary: Return JWT token
+      operationId: auth.login
+      tags:
+        - Auth
+      requestBody:
+        $ref: '#/components/requestBodies/Login'
+        required: true
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token
+
+servers:
+  - url: /api
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          format: email
+          description: Email of the user
+        role:
+          type: string
+          enum: [USER, MANAGER, ADMIN]
+          description: Role of the user
+        daily_calories:
+          type: integer
+          description: Calories of the day for the user
+
+    Meal:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id of the meal
+        date:
+          type: string
+          format: date
+          description: Date of the meal
+        time:
+          type: string
+          format: time
+          description: Time of the meal
+        grams:
+          type: integer
+          description: Name of the meal
+        description:
+          type: string
+          description: Description of the meal
+        calories:
+          type: integer
+          description: Calories of the meal
+        under_daily_total:
+          type: boolean
+          readOnly: true
+          description: Calories of the meal
+
+    UserWithMeals:
+      $ref: '#/components/schemas/User'
+      meals:
+        type: array
+        items:
+          $ref: '#/components/schemas/Meal'
+
+    MealWithUser:
+      $ref: '#/components/schemas/Meal'
+      user:
+        $ref: '#/components/schemas/User'
+
+    Filter:
+      type: object
+      properties:
+        filter:
+          type: string
+          description: Filter
+        itemsPerPage:
+          type: integer
+          description: Number of items per page
+        pageNumber:
+          type: integer
+          description: Page number
+
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+            password:
+              type: string
+              format: password
+              description: Password of the user
+
+    Meal:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Meal'
+
+    Login:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: Username
+              password:
+                type: string
+                format: password
+                description: Password
+
+
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: auth.decode_token
