@@ -9,7 +9,7 @@ from flask import abort, jsonify, make_response
 from jose import JWTError, jwt
 from werkzeug.security import check_password_hash
 
-from models import Role, User
+from calories.main.models.user import Role, User
 
 JWT_ISSUER = 'app.calories'
 JWT_SECRET = '*&UbA>>D5nj6S_6KaIp*$5sppQS-B'

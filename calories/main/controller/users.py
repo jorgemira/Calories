@@ -6,10 +6,12 @@ users data
 from flask import make_response, abort
 from marshmallow import INCLUDE
 
-from auth import is_allowed
-from config import db
-from models import User, UserSchema, Meal, Role
-from filters import apply_filter
+from calories.main import db
+from calories.main.controller.auth import is_allowed
+from calories.main.util.filters import apply_filter
+from calories.main.models.meal import Meal
+from calories.main.models.user import User, UserSchema, Role
+
 
 @is_allowed(roles_allowed=[Role.MANAGER])
 def read_all(user, filter=None, itemsPerPage=None, pageNumber=None):

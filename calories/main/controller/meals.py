@@ -6,11 +6,12 @@ people data
 from flask import make_response, abort
 from sqlalchemy.sql import func
 
-from auth import is_allowed
-from config import db
-from external_apis import calories_from_nutritionix
-from filters import apply_filter
-from models import User, Meal, MealSchema, Role
+from calories.main import db
+from calories.main.controller.auth import is_allowed
+from calories.main.util.external_apis import calories_from_nutritionix
+from calories.main.util.filters import apply_filter
+from calories.main.models.meal import Meal, MealSchema
+from calories.main.models.user import User, Role
 
 
 @is_allowed(roles_allowed=[Role.USER])

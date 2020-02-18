@@ -19,6 +19,8 @@ sqlalchemy-filters = "*"
 pytest = "*"
 psycopg2 = "*"
 flask-testing = "*"
+flask-migrate = "*"
+flask-script = "*"
 
 [requires]
 python_version = "3.8"
