@@ -16,6 +16,9 @@ connexion = {extras = ["swagger-ui"],version = "*"}
 marshmallow-sqlalchemy = "*"
 fiql-parser = "*"
 sqlalchemy-filters = "*"
+pytest = "*"
+psycopg2 = "*"
+flask-testing = "*"
 
 [requires]
 python_version = "3.8"

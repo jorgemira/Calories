@@ -1,13 +1,12 @@
-import os
 from datetime import date, time
 
-from config import db, basedir
+from config import db
 from models import User, Meal
 
 USERS = [
     {
         "username": "jmira",
-        "password": "bollox",
+        "password": "admin",
         "name": "Jorge",
         "email": "jmira@gmail.com",
         "role": "ADMIN",
