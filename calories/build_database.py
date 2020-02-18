@@ -27,9 +27,8 @@ USERS = [
     },
 ]
 
-# Delete database file if it exists currently
-if os.path.exists(os.path.join(basedir, "calories.db")):
-    os.remove(os.path.join(basedir, "calories.db"))
+# Delete database file
+db.drop_all()
 
 # Create the database
 db.create_all()

@@ -13,11 +13,16 @@ connex_app = connexion.App(__name__, specification_dir=basedir)
 app = connex_app.app
 
 # Build the Sqlite ULR for SqlAlchemy
-sqlite_url = "sqlite:////" + os.path.join(basedir, "calories.db")
+# sqlite_url = "sqlite:////" + os.path.join(basedir, "calories.db")
+url = 'localhost'
+user = 'jorge'
+pw = 'jorge_password'
+db = 'calories'
 
+db_url = f'postgresql+psycopg2://{user}:{pw}@{url}/{db}'
 # Configure the SqlAlchemy part of the app instance
 app.config["SQLALCHEMY_ECHO"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = sqlite_url
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Create the SqlAlchemy db instance
