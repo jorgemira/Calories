@@ -1,6 +1,6 @@
 from enum import Enum
 
-from marshmallow import fields, INCLUDE
+from marshmallow import fields
 from marshmallow_enum import EnumField
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash
