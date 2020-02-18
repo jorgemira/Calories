@@ -7,6 +7,7 @@ from functools import wraps
 
 from flask import abort, jsonify, make_response
 from jose import JWTError, jwt
+from werkzeug.security import check_password_hash
 
 from models import Role, User
 
@@ -24,8 +25,8 @@ def login(body):
     user = User.query.filter(User.username == username).one_or_none()
     if not user:
         abort(401, f"User '{username}' not found")
-    # if werkzeug.check_password_hash(user.password, password):
-    #     abort(401, f"Wrong password for user '{username}'")
+    if not check_password_hash(user.password, password):
+        abort(401, f"Wrong password for user '{username}'")
 
     timestamp = _current_timestamp()
     payload = {
