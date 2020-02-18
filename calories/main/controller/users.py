@@ -9,8 +9,7 @@ from marshmallow import INCLUDE
 from calories.main import db
 from calories.main.controller.auth import is_allowed
 from calories.main.util.filters import apply_filter
-from calories.main.models.meal import Meal
-from calories.main.models.user import User, UserSchema, Role
+from calories.main.models.models import User, UserSchema, Role, Meal
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])

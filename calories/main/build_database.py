@@ -1,8 +1,7 @@
 from datetime import date, time
 
 from calories.main import db
-from calories.main.models.meal import Meal
-from calories.main.models.user import User
+from calories.main.models.models import Meal, User
 
 USERS = [
     {

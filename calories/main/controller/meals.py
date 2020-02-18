@@ -10,8 +10,7 @@ from calories.main import db
 from calories.main.controller.auth import is_allowed
 from calories.main.util.external_apis import calories_from_nutritionix
 from calories.main.util.filters import apply_filter
-from calories.main.models.meal import Meal, MealSchema
-from calories.main.models.user import User, Role
+from calories.main.models.models import Meal, MealSchema, User, Role
 
 
 @is_allowed(roles_allowed=[Role.USER])

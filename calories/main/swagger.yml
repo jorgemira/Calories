@@ -6,7 +6,7 @@ info:
 paths:
   /users:
     get:
-      operationId: calories.main.users.read_all
+      operationId: calories.main.controller.users.read_all
       tags:
         - Users
       summary: Read the entire set of users, sorted by user name
@@ -28,7 +28,7 @@ paths:
         - jwt: []
 
     post:
-      operationId: calories.main.users.create
+      operationId: calories.main.controller.users.create
       tags:
         - Users
       summary: Create a user
@@ -45,7 +45,7 @@ paths:
 
   "/users/{username}":
     get:
-      operationId: calories.main.users.read_one
+      operationId: calories.main.controller.users.read_one
       tags:
         - Users
       summary: Read one user
@@ -69,7 +69,7 @@ paths:
         - jwt: []
 
     put:
-      operationId: calories.main.users.update
+      operationId: calories.main.controller.users.update
       tags:
         - Users
       summary: Update an user
@@ -98,7 +98,7 @@ paths:
         - jwt: []
 
     delete:
-      operationId: calories.main.users.delete
+      operationId: calories.main.controller.users.delete
       tags:
         - Users
       summary: Delete an user
@@ -119,7 +119,7 @@ paths:
 
   /meals:
     get:
-      operationId: calories.main.meals.read_all
+      operationId: calories.main.controller.meals.read_all
       tags:
         - Meals
       summary: Read the entire set of meals for all users
@@ -141,7 +141,7 @@ paths:
 
   "/users/{username}/meals":
     get:
-      operationId: calories.main.meals.read_meals
+      operationId: calories.main.controller.meals.read_meals
       tags:
         - Meals
       summary: Read all the meals associated with an user
@@ -167,7 +167,7 @@ paths:
         - jwt: []
 
     post:
-      operationId: calories.main.meals.create
+      operationId: calories.main.controller.meals.create
       tags:
         - Meals
       summary: Create a meal associated with a user
@@ -197,7 +197,7 @@ paths:
 
   "/users/{username}/meals/{id}":
     get:
-      operationId: calories.main.meals.read_one
+      operationId: calories.main.controller.meals.read_one
       tags:
         - Meals
       summary: Read a particular meal associated with a user
@@ -227,7 +227,7 @@ paths:
         - jwt: []
 
     put:
-      operationId: calories.main.meals.update
+      operationId: calories.main.controller.meals.update
       tags:
         - Meals
       summary: Update a meal associated with a user
@@ -260,7 +260,7 @@ paths:
         - jwt: []
 
     delete:
-      operationId: calories.main.meals.delete
+      operationId: calories.main.controller.meals.delete
       tags:
         - Meals
       summary: Delete an entry associated with an user
@@ -288,7 +288,7 @@ paths:
   /login/:
     post:
       summary: Return JWT token
-      operationId: calories.main.auth.login
+      operationId: calories.main.controller.auth.login
       tags:
         - Auth
       requestBody:
@@ -437,4 +437,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      x-bearerInfoFunc: calories.main.auth.decode_token
+      x-bearerInfoFunc: calories.main.controller.auth.decode_token
