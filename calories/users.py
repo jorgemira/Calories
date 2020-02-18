@@ -4,20 +4,22 @@ users data
 """
 
 from flask import make_response, abort
+from marshmallow import INCLUDE
 
 from auth import is_allowed
 from config import db
 from models import User, UserSchema, Meal, Role
-
+from filters import apply_filter
 
 @is_allowed(roles_allowed=[Role.MANAGER])
-def read_all(**kwargs):
+def read_all(user, filter=None, itemsPerPage=None, pageNumber=None):
     """
     This function responds to a request for /api/users
     with the complete lists of users
     :return:        json string of list of users
     """
     users = User.query.all()
+    users = apply_filter(users, filter, itemsPerPage, pageNumber)
 
     # Serialize the data for the response
     user_schema = UserSchema(many=True, exclude=('id', '_password'))
@@ -64,7 +66,7 @@ def create(user, body):
     if existing_user is None:
 
         # Create a user instance using the schema and the passed in user
-        schema = UserSchema(exclude=('id', '_password', 'meals'))
+        schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
         new_user = schema.load(body, session=db.session)
 
         # Add the user to the database
@@ -82,7 +84,7 @@ def create(user, body):
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
-def update(username, body):
+def update(user, username, body):
     """
     This function updates an existing user in the users structure
     :param username:   Id of the user to update in the users structure
@@ -115,17 +117,17 @@ def update(username, body):
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
-def delete(username):
+def delete(user, username):
     """
     This function deletes a user from the users structure
     :param username:   Id of the user to delete
     :return:          200 on successful delete, 404 if not found
     """
     # Get the user requested
-    user = User.query.filter(User.username == username).one_or_none()
+    delete_user = User.query.filter(User.username == username).one_or_none()
 
-    if user is not None:
-        db.session.delete(user)
+    if delete_user is not None:
+        db.session.delete(delete_user)
         db.session.commit()
         return make_response(f"User '{username}' deleted", 200)
     else:

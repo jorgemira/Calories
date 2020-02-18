@@ -11,12 +11,9 @@ paths:
         - Users
       summary: Read the entire set of users, sorted by user name
       parameters:
-        - name: filter
-          in: body
-          description: Filtering for results
-          required: false
-          schema:
-            $ref: '#/components/schemas/Filter'
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/itemsPerPageParam'
+        - $ref: '#/components/parameters/pageNumberParam'
       description: Read the entire set of users, sorted by user name
       responses:
         "200":
@@ -126,6 +123,10 @@ paths:
       tags:
         - Meals
       summary: Read the entire set of meals for all users
+      parameters:
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/itemsPerPageParam'
+        - $ref: '#/components/parameters/pageNumberParam'
       responses:
         "200":
           description: Successfully read entries for all meals operation
@@ -150,6 +151,9 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/itemsPerPageParam'
+        - $ref: '#/components/parameters/pageNumberParam'
       responses:
         "200":
           description: Successfully read meals for user
@@ -327,12 +331,17 @@ components:
         daily_calories:
           type: integer
           description: Calories of the day for the user
+        password:
+          type: string
+          format: password
+          description: Password of the user
 
     Meal:
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
           description: Id of the meal
         date:
           type: string
@@ -368,18 +377,32 @@ components:
       user:
         $ref: '#/components/schemas/User'
 
-    Filter:
-      type: object
-      properties:
-        filter:
-          type: string
-          description: Filter
-        itemsPerPage:
-          type: integer
-          description: Number of items per page
-        pageNumber:
-          type: integer
-          description: Page number
+  parameters:
+    filterParam:
+      name: filter
+      in: query
+      description: Filtering for results
+      schema:
+        type: string
+
+    itemsPerPageParam:
+      name: itemsPerPage
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+      in: query
+      description: Items per page
+
+    pageNumberParam:
+      name: pageNumber
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      in: query
+      description: Page number
+
 
   requestBodies:
     User:
@@ -387,10 +410,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
-            password:
-              type: string
-              format: password
-              description: Password of the user
 
     Meal:
       content:

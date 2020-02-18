@@ -1,6 +1,6 @@
 from enum import Enum
 
-from marshmallow import fields
+from marshmallow import fields, INCLUDE
 from marshmallow_enum import EnumField
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash
@@ -53,6 +53,7 @@ class Meal(db.Model):
 
 
 class UserSchema(ma.ModelSchema):
+    # unknown = INCLUDE
     class Meta:
         model = User
         sqla_session = db.session

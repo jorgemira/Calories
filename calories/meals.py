@@ -9,11 +9,12 @@ from sqlalchemy.sql import func
 from auth import is_allowed
 from config import db
 from external_apis import calories_from_nutritionix
+from filters import apply_filter
 from models import User, Meal, MealSchema, Role
 
 
 @is_allowed(roles_allowed=[Role.USER])
-def read_all(user):
+def read_all(user, filter=None, itemsPerPage=None, pageNumber=None):
     """
     This function responds to a request for /api/people/meals
     with the complete list of meals, sorted by meal timestamp
@@ -22,6 +23,8 @@ def read_all(user):
     # Query the database for all the meals
     meals = Meal.query.all()
 
+    meals = apply_filter(meals, filter, itemsPerPage, pageNumber)
+
     # Serialize the list of meals from our data
     meal_schema = MealSchema(many=True, exclude=['user.id', 'user.password'])
     data = meal_schema.dump(meals)
@@ -29,7 +32,7 @@ def read_all(user):
 
 
 @is_allowed(roles_allowed=[Role.USER])
-def read_meals(user, username):
+def read_meals(user, username, filter=None, itemsPerPage=None, pageNumber=None):
     """
     This function responds to a request for /api/users/{user_id}/meals
     with one matching user from users
@@ -41,7 +44,8 @@ def read_meals(user, username):
     if user is not None:
         # Serialize the data for the response
         meal_schema = MealSchema(many=True, exclude=['user'])
-        data = meal_schema.dump(user.meals)
+        # TODO: this probably wont work
+        data = meal_schema.dump(apply_filter(user.meals, filter, itemsPerPage, pageNumber))
         return data
     else:
         abort(404, f"User '{username}' not found")
