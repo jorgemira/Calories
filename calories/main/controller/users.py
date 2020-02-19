@@ -3,27 +3,28 @@ This is the users module and supports all the REST actions for the
 users data
 """
 
-from flask import make_response, abort
+from flask import abort, make_response, jsonify
 from marshmallow import INCLUDE
 
 from calories.main import db
 from calories.main.controller.auth import is_allowed
+from calories.main.controller.helpers import get_user
+from calories.main.models.models import User, UserSchema, Role
 from calories.main.util.filters import apply_filter
-from calories.main.models.models import User, UserSchema, Role, Meal
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
-def read_all(user, filter=None, itemsPerPage=None, pageNumber=None):
+def read_all(user, filter='', itemsPerPage=None, pageNumber=None):
     """
     This function responds to a request for /api/users
     with the complete lists of users
     :return:        json string of list of users
     """
-    users = User.query.all()
+    users = User.query
     users = apply_filter(users, filter, itemsPerPage, pageNumber)
 
     # Serialize the data for the response
-    user_schema = UserSchema(many=True, exclude=('id', '_password'))
+    user_schema = UserSchema(many=True, exclude=('id', '_password', 'meals'))
     data = user_schema.dump(users)
     return data
 
@@ -37,19 +38,12 @@ def read_one(user, username):
     :return:            user matching id
     """
     # Build the initial query
-    user = User.query.filter(User.username == username).outerjoin(Meal).one_or_none()
+    user = get_user(username)
 
-    # Did we find a user?
-    if user is not None:
-
-        # Serialize the data for the response
-        user_schema = UserSchema(exclude=('id', '_password'))
-        data = user_schema.dump(user)
-        return data
-
-    # Otherwise, nope, didn't find that user
-    else:
-        abort(404, f"User '{username}' not found")
+    # Serialize the data for the response
+    user_schema = UserSchema(exclude=('id', '_password', 'meals'))
+    data = user_schema.dump(user)
+    return data
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
@@ -81,7 +75,7 @@ def create(user, body):
 
     # Otherwise, nope, user exists already
     else:
-        abort(409, f"User {username} exists already")
+        abort(409, f"User '{username}' exists already")
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
@@ -93,28 +87,23 @@ def update(user, username, body):
     :return:            updated user structure
     """
     # Get the user requested from the db into session
-    # TODO not allow to update username
-    update_user = User.query.filter(User.username == username).one_or_none()
+    update_user = get_user(username)
 
-    if update_user is not None:
+    # turn the passed in user into a db object
+    schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
+    updated = schema.load(body, session=db.session)
 
-        # turn the passed in user into a db object
-        schema = UserSchema(exclude=('id', '_password', 'meals'))
-        updated = schema.load(body, session=db.session)
+    # Set the id to the user we want to update
+    updated.id = update_user.id
 
-        # Set the id to the user we want to update
-        updated.user_id = update_user.user_id
+    # merge the new object into the old and commit it to the db
+    db.session.merge(updated)
+    db.session.commit()
 
-        # merge the new object into the old and commit it to the db
-        db.session.merge(updated)
-        db.session.commit()
+    # return updated user in the response
+    data = schema.dump(update_user)
 
-        # return updated user in the response
-        data = schema.dump(update_user)
-
-        return data, 200
-    else:
-        abort(404, f"User {username} not found")
+    return data, 200
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
@@ -125,11 +114,9 @@ def delete(user, username):
     :return:          200 on successful delete, 404 if not found
     """
     # Get the user requested
-    delete_user = User.query.filter(User.username == username).one_or_none()
+    delete_user = get_user(username)
 
-    if delete_user is not None:
-        db.session.delete(delete_user)
-        db.session.commit()
-        return make_response(f"User '{username}' deleted", 200)
-    else:
-        abort(404, f"User '{username}' not found")
+    db.session.delete(delete_user)
+    db.session.commit()
+
+    return make_response(jsonify({'message': f"User '{username}' deleted", 'success': True}), 200)

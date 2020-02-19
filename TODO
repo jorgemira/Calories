@@ -1,0 +1,13 @@
+Not allow Role changes on user put
+remove meals endpoint X
+user get end point does not show meals? X
+Fix privileges
+usernames and password not funny
+return loaction headers posts
+fix issue with wrong dates on meals
+try to get meals non existing users
+fix update meals
+check filters/pagination
+
+docs
+logging

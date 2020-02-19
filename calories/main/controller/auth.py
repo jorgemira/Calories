@@ -35,7 +35,15 @@ def login(body):
         "exp": int(timestamp + JWT_LIFETIME_SECONDS),
         "sub": str(username),
     }
-    return make_response(jsonify(token=jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)), 200)
+
+    response = {
+        'status': 201,
+        'title': 'Success',
+        'detail': f"User '{username}' successfully logged in",
+        'Authorization': jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    }
+    return response, 201
+
 
 def decode_token(token):
     try:

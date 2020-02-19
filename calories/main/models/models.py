@@ -57,40 +57,8 @@ class UserSchema(ma.ModelSchema):
         model = User
         sqla_session = db.session
 
-    meals = fields.Nested('UserMealSchema', default=[], many=True)
-
-
-class UserMealSchema(ma.ModelSchema):
-    """
-    This class exists to get around a recursion issue
-    """
-    id = fields.Integer()
-    user_id = fields.Integer()
-    date = fields.Date()
-    time = fields.Time()
-    name = fields.String()
-    grams = fields.Integer()
-    description = fields.String()
-    calories = fields.Integer()
-    under_daily_total = fields.Boolean()
-
 
 class MealSchema(ma.ModelSchema):
     class Meta:
         model = Meal
         sqla_session = db.session
-
-    user = fields.Nested('MealUserSchema', default=None)
-
-
-class MealUserSchema(ma.ModelSchema):
-    """
-    This class exists to get around a recursion issue
-    """
-    id = fields.Integer()
-    username = fields.String()
-    password = fields.String()
-    name = fields.String()
-    email = fields.String()
-    role = EnumField(Role)
-    daily_calories = fields.Integer()

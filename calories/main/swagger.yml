@@ -23,7 +23,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserWithMeals'
+                  $ref: '#/components/schemas/User'
       security:
         - jwt: []
 
@@ -40,6 +40,10 @@ paths:
       responses:
         "201":
           description: Successfully created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
       security:
         - jwt: []
 
@@ -62,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithMeals'
+                $ref: '#/components/schemas/User'
         "404":
           description: User not found
       security:
@@ -82,9 +86,12 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: '#/components/requestBodies/User'
         description: User to update
         required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         "200":
           description: Successfully updated user
@@ -114,28 +121,6 @@ paths:
           description: Successfully deleted an user
         "404":
           description: User not found
-      security:
-        - jwt: []
-
-  /meals:
-    get:
-      operationId: calories.main.controller.meals.read_all
-      tags:
-        - Meals
-      summary: Read the entire set of meals for all users
-      parameters:
-        - $ref: '#/components/parameters/filterParam'
-        - $ref: '#/components/parameters/itemsPerPageParam'
-        - $ref: '#/components/parameters/pageNumberParam'
-      responses:
-        "200":
-          description: Successfully read entries for all meals operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MealWithUser'
       security:
         - jwt: []
 
@@ -190,8 +175,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Meal'
-        "404":
-          description: Meal not found
       security:
         - jwt: []
 
@@ -246,7 +229,10 @@ paths:
           schema:
             type: integer
       requestBody:
-        $ref: "#/components/requestBodies/Meal"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         "200":
           description: Successfully updated meal
@@ -285,7 +271,7 @@ paths:
       security:
         - jwt: []
 
-  /login/:
+  /login:
     post:
       summary: Return JWT token
       operationId: calories.main.controller.auth.login
@@ -353,29 +339,19 @@ components:
           description: Time of the meal
         grams:
           type: integer
+          minimum: 0
           description: Name of the meal
         description:
           type: string
           description: Description of the meal
         calories:
           type: integer
+          minimum: 0
           description: Calories of the meal
         under_daily_total:
           type: boolean
           readOnly: true
           description: Calories of the meal
-
-    UserWithMeals:
-      $ref: '#/components/schemas/User'
-      meals:
-        type: array
-        items:
-          $ref: '#/components/schemas/Meal'
-
-    MealWithUser:
-      $ref: '#/components/schemas/Meal'
-      user:
-        $ref: '#/components/schemas/User'
 
   parameters:
     filterParam:
@@ -410,12 +386,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
+            required:
+              - username
+              - name
+              - email
+              - role
+              - daily_calories
+              - password
 
     Meal:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Meal'
+            required:
+              - date
+              - time
+              - grams
+              - description
+              - calories
 
     Login:
       content:
@@ -430,6 +419,9 @@ components:
                 type: string
                 format: password
                 description: Password
+            required:
+              - username
+              - password
 
 
   securitySchemes:
