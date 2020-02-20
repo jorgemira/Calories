@@ -303,9 +303,11 @@ components:
         username:
           type: string
           description: Username
+          minLength: 4
         name:
           type: string
           description: Name of the user
+          minLength: 1
         email:
           type: string
           format: email
@@ -320,6 +322,7 @@ components:
         password:
           type: string
           format: password
+          minLength: 6
           description: Password of the user
 
     Meal:
@@ -337,6 +340,10 @@ components:
           type: string
           format: time
           description: Time of the meal
+        name:
+          type: string
+          description: Name of the meal
+          minLength: 1
         grams:
           type: integer
           minimum: 0
@@ -344,6 +351,7 @@ components:
         description:
           type: string
           description: Description of the meal
+          minLength: 1
         calories:
           type: integer
           minimum: 0
@@ -402,6 +410,7 @@ components:
             required:
               - date
               - time
+              - name
               - grams
               - description
               - calories

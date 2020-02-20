@@ -5,11 +5,12 @@ import logging
 import time
 from functools import wraps
 
-from flask import abort, jsonify, make_response
+from flask import abort
 from jose import JWTError, jwt
 from werkzeug.security import check_password_hash
 
-from calories.main.models.models import Role, User
+from calories.main.controller.helpers import get_user
+from calories.main.models.models import Role
 
 JWT_ISSUER = 'app.calories'
 JWT_SECRET = '*&UbA>>D5nj6S_6KaIp*$5sppQS-B'
@@ -22,9 +23,8 @@ logger = logging.getLogger(__name__)
 def login(body):
     username = body.get('username')
     password = body.get('password')
-    user = User.query.filter(User.username == username).one_or_none()
-    if not user:
-        abort(401, f"User '{username}' not found")
+    user = get_user(username)
+
     if not check_password_hash(user.password, password):
         abort(401, f"Wrong password for user '{username}'")
 
@@ -56,22 +56,33 @@ def _current_timestamp():
     return int(time.time())
 
 
-def is_allowed(roles_allowed=None):
+def is_allowed(roles_allowed=None, allow_self=False, only_allow_self=False):
     def decorator(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
             nonlocal roles_allowed
             if roles_allowed is None:
                 roles_allowed = []
-            user = User.query.filter(User.username == kwargs['user']).one_or_none()
-            if user is None:
-                abort(401, f"Username '{kwargs['user']}' not found")
-            elif user.role not in roles_allowed + [Role.ADMIN] and user.username != kwargs.get('username', None):
+
+            user = get_user(kwargs['user'])
+
+            # Admin can do everything
+            if user.role == Role.ADMIN:
+                return func(*args, **kwargs)
+
+            if only_allow_self:
+                if user.role not in roles_allowed:
+                    abort(401, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
+                               f" perform the action")
+                if user.username != kwargs.get('username', user.username):
+                    abort(401, f"User '{kwargs['user']}' cannot perform the action for other user")
+                return func(*args, **kwargs)
+
+            if user.role in roles_allowed or (allow_self and user.username == kwargs.get('username', None)):
+                return func(*args, **kwargs)
+            else:
                 abort(401, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
                            f" perform the action")
-            else:
-                return func(*args, **kwargs)
-            return func(*args, **kwargs)
 
         return wrapped
 

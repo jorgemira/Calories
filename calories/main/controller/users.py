@@ -1,6 +1,5 @@
 """
-This is the users module and supports all the REST actions for the
-users data
+This is the users module and supports all the REST actions for the users data
 """
 
 from flask import abort, make_response, jsonify
@@ -23,13 +22,13 @@ def read_all(user, filter='', itemsPerPage=None, pageNumber=None):
     users = User.query
     users = apply_filter(users, filter, itemsPerPage, pageNumber)
 
-    # Serialize the data for the response
     user_schema = UserSchema(many=True, exclude=('id', '_password', 'meals'))
     data = user_schema.dump(users)
+
     return data
 
 
-@is_allowed(roles_allowed=[Role.MANAGER])
+@is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def read_one(user, username):
     """
     This function responds to a request for /api/users/{user_id}
@@ -37,12 +36,10 @@ def read_one(user, username):
     :param user_id:   Id of user to find
     :return:            user matching id
     """
-    # Build the initial query
     user = get_user(username)
-
-    # Serialize the data for the response
     user_schema = UserSchema(exclude=('id', '_password', 'meals'))
     data = user_schema.dump(user)
+
     return data
 
 
@@ -57,28 +54,28 @@ def create(user, body):
     username = body.get("username")
     existing_user = User.query.filter(User.username == username).one_or_none()
 
-    # Can we insert this user?
-    if existing_user is None:
-
-        # Create a user instance using the schema and the passed in user
-        schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
-        new_user = schema.load(body, session=db.session)
-
-        # Add the user to the database
-        db.session.add(new_user)
-        db.session.commit()
-
-        # Serialize and return the newly created user in the response
-        data = schema.dump(new_user)
-
-        return data, 201
-
-    # Otherwise, nope, user exists already
-    else:
+    if existing_user:
         abort(409, f"User '{username}' exists already")
 
+    # Create a user instance using the schema and the passed in user
+    schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
+    new_user = schema.load(body, session=db.session)
 
-@is_allowed(roles_allowed=[Role.MANAGER])
+    if get_user(user).role == Role.MANAGER and new_user.role != Role.USER:
+        abort(401, f"User '{user}' can only create users with role USER")
+
+    if not body['username'].isalnum():
+        abort(400, f"Username must contain only alphanumeric characters")
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    data = schema.dump(new_user)
+
+    return data, 201
+
+
+@is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def update(user, username, body):
     """
     This function updates an existing user in the users structure
@@ -86,17 +83,20 @@ def update(user, username, body):
     :param body:      user to update
     :return:            updated user structure
     """
-    # Get the user requested from the db into session
+
     update_user = get_user(username)
 
-    # turn the passed in user into a db object
     schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
     updated = schema.load(body, session=db.session)
 
-    # Set the id to the user we want to update
+    if updated.role and updated.role != update_user.role and get_user(user).role != Role.ADMIN:
+        abort(401, f"User '{user}' is not allowed to change Role")
+
+    if not body.get('username', 'a').isalnum():
+        abort(400, f"Username must contain only alphanumeric characters")
+
     updated.id = update_user.id
 
-    # merge the new object into the old and commit it to the db
     db.session.merge(updated)
     db.session.commit()
 
@@ -106,7 +106,7 @@ def update(user, username, body):
     return data, 200
 
 
-@is_allowed(roles_allowed=[Role.MANAGER])
+@is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def delete(user, username):
     """
     This function deletes a user from the users structure
@@ -115,6 +115,9 @@ def delete(user, username):
     """
     # Get the user requested
     delete_user = get_user(username)
+
+    if get_user(user).role == Role.MANAGER and delete_user.role != Role.USER:
+        abort(401, f"User '{user}' can only delete users with role USER")
 
     db.session.delete(delete_user)
     db.session.commit()
