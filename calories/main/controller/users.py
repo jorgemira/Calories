@@ -14,12 +14,8 @@ from calories.main.util.filters import apply_filter
 
 @is_allowed(roles_allowed=[Role.MANAGER])
 def read_all(user, filter='', itemsPerPage=None, pageNumber=None):
-    """
-    This function responds to a request for /api/users
-    with the complete lists of users
-    :return:        json string of list of users
-    """
-    users = User.query
+    users = User.query.order_by(User.username)
+
     users = apply_filter(users, filter, itemsPerPage, pageNumber)
 
     user_schema = UserSchema(many=True, exclude=('id', '_password', 'meals'))
@@ -30,12 +26,6 @@ def read_all(user, filter='', itemsPerPage=None, pageNumber=None):
 
 @is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def read_one(user, username):
-    """
-    This function responds to a request for /api/users/{user_id}
-    with one matching user from users
-    :param user_id:   Id of user to find
-    :return:            user matching id
-    """
     user = get_user(username)
     user_schema = UserSchema(exclude=('id', '_password', 'meals'))
     data = user_schema.dump(user)
@@ -45,19 +35,12 @@ def read_one(user, username):
 
 @is_allowed(roles_allowed=[Role.MANAGER])
 def create(user, body):
-    """
-    This function creates a new user in the users structure
-    based on the passed in user data
-    :param body:  user to create in users structure
-    :return:        201 on success, 406 on user exists
-    """
     username = body.get("username")
     existing_user = User.query.filter(User.username == username).one_or_none()
 
     if existing_user:
         abort(409, f"User '{username}' exists already")
 
-    # Create a user instance using the schema and the passed in user
     schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
     new_user = schema.load(body, session=db.session)
 
@@ -77,13 +60,6 @@ def create(user, body):
 
 @is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def update(user, username, body):
-    """
-    This function updates an existing user in the users structure
-    :param username:   Id of the user to update in the users structure
-    :param body:      user to update
-    :return:            updated user structure
-    """
-
     update_user = get_user(username)
 
     schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
@@ -100,7 +76,6 @@ def update(user, username, body):
     db.session.merge(updated)
     db.session.commit()
 
-    # return updated user in the response
     data = schema.dump(update_user)
 
     return data, 200
@@ -108,12 +83,6 @@ def update(user, username, body):
 
 @is_allowed(roles_allowed=[Role.MANAGER], allow_self=True)
 def delete(user, username):
-    """
-    This function deletes a user from the users structure
-    :param username:   Id of the user to delete
-    :return:          200 on successful delete, 404 if not found
-    """
-    # Get the user requested
     delete_user = get_user(username)
 
     if get_user(user).role == Role.MANAGER and delete_user.role != Role.USER:

@@ -38,6 +38,7 @@ def to_sql_alchemy(filter_spec):
 
 
 def apply_filter(query, filter_spec, page_size=10, page_number=1):
-    query = apply_filters(query, to_sql_alchemy(to_fiql(filter_spec)))
+    if filter_spec:
+        query = apply_filters(query, to_sql_alchemy(to_fiql(filter_spec)))
     query, _ = apply_pagination(query, page_number=page_number, page_size=page_size)
     return query

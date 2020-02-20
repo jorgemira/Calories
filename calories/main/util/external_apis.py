@@ -14,7 +14,7 @@ def calories_from_nutritionix(meal):
         return 0
 
     if not food_info['total_hits']:
-        print('Food not found')  # Change to logger
+        print('Food not found')  # TODO Change to logger
         return 0
 
     meal_id = food_info['hits'][0]['fields']['item_id']

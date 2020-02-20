@@ -37,27 +37,24 @@ def populate_db():
             "role": "USER",
             "daily_calories": 2500,
             "meals": [
-                {"id": 1,
-                 "user_id": 2,
-                 "date": date(2020, 2, 11),
-                 "time": time(15, 0, 3),
-                 "name": "meal 1",
-                 "grams": 100,
-                 "description": "Meal 1 User 1",
-                 "calories": 500,
-                 "under_daily_total": True,
-                 },
-                {"id": 3,
-                 "user_id": 2,
-                 "date": date(2020, 2, 11),
-                 "time": time(15, 0, 3),
-                 "name": "meal 2",
-                 "grams": 100,
-                 "description": "Meal 1 User 2",
-                 "calories": 500,
-                 "under_daily_total": True,
-                 }
-
+                {
+                    "date": date(2020, 2, 11),
+                    "time": time(15, 0, 3),
+                    "name": "meal 1",
+                    "grams": 100,
+                    "description": "Meal 1 User 1",
+                    "calories": 500,
+                    "under_daily_total": False,
+                },
+                {
+                    "date": date(2020, 2, 11),
+                    "time": time(15, 10, 3),
+                    "name": "meal 2",
+                    "grams": 100,
+                    "description": "Meal 2 User 1",
+                    "calories": 2100,
+                    "under_daily_total": False,
+                }
             ]
         },
         {
@@ -68,22 +65,21 @@ def populate_db():
             "role": "USER",
             "daily_calories": 3000,
             "meals": [
-                {"id": 2,
-                 "user_id": 3,
-                 "date": date(2020, 2, 11),
-                 "time": time(15, 0, 3),
-                 "name": "cheese",
-                 "grams": 100,
-                 "description": "awesome stilton blue cheese",
-                 "calories": 500,
-                 "under_daily_total": True,
-                 }
+                {
+                    "date": date(2020, 2, 11),
+                    "time": time(15, 0, 3),
+                    "name": "cheese",
+                    "grams": 100,
+                    "description": "Meal 3 User 2",
+                    "calories": 500,
+                    "under_daily_total": True,
+                }
             ]
         },
         {
             "username": "manager1",
             "password": "pass_manager1",
-            "name": "Manager 2",
+            "name": "Manager 1",
             "email": "manager1@managermail.com",
             "role": "MANAGER",
             "daily_calories": 2000,
@@ -92,7 +88,7 @@ def populate_db():
         {
             "username": "manager2",
             "password": "pass_manager2",
-            "name": "Manager2",
+            "name": "Manager 2",
             "email": "manager2@managermail.com",
             "role": "MANAGER",
             "daily_calories": 4000,
