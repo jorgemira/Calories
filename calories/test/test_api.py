@@ -149,6 +149,13 @@ class TestAPI(BaseTestCase):
             response = self.get(filtered_path, headers)
             self._check_succes(expected, response, 200)
 
+            # Test filtering:
+            expected = [{'daily_calories': 3000, 'email': 'user2@usemail.com', 'name': 'User 2', 'role': 'USER',
+                         'username': 'user2'}]
+            filtered_path = path + "?filter=" + quote('wrongfilter')
+            response = self.get(filtered_path, headers)
+            self._check_error(response, 400, 'Bad Request', "Filter 'wrongfilter' is invalid")
+
     def test_post_user(self):
         path = 'api/users'
         auth_token = self._login()

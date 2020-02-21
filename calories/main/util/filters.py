@@ -1,7 +1,9 @@
 import re
 
-from fiql_parser import parse_str_to_expression
+from fiql_parser import parse_str_to_expression, FiqlException
 from sqlalchemy_filters import apply_filters, apply_pagination
+from sqlalchemy_filters.exceptions import FieldNotFound, BadFilterFormat
+from werkzeug.exceptions import abort
 
 
 def to_fiql(filter_spec):
@@ -22,6 +24,8 @@ def to_fiql(filter_spec):
 
 
 def to_sql_alchemy(filter_spec):
+    if None in filter_spec:
+        raise FiqlException
     if isinstance(filter_spec, tuple):
         if "'" in filter_spec[2]:
             value = filter_spec[2].replace("'", "")
@@ -37,8 +41,11 @@ def to_sql_alchemy(filter_spec):
         return {filter_spec[0].lower(): [to_sql_alchemy(e) for e in filter_spec[1:]]}
 
 
-def apply_filter(query, filter_spec, page_size=10, page_number=1):
+def apply_filter(query, filter_spec=None, page_size=10, page_number=1):
     if filter_spec:
-        query = apply_filters(query, to_sql_alchemy(to_fiql(filter_spec)))
+        try:
+            query = apply_filters(query, to_sql_alchemy(to_fiql(filter_spec)))
+        except (FiqlException, FieldNotFound, BadFilterFormat):
+            abort(400, f"Filter '{filter_spec}' is invalid")
     query, _ = apply_pagination(query, page_number=page_number, page_size=page_size)
     return query
