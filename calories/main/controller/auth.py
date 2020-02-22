@@ -11,10 +11,8 @@ from werkzeug.security import check_password_hash
 
 from calories.main.controller.helpers import get_user
 from calories.main.models.models import Role
+from calories.main import cfg
 
-JWT_ISSUER = 'app.calories'
-JWT_SECRET = '*&UbA>>D5nj6S_6KaIp*$5sppQS-B'
-JWT_LIFETIME_SECONDS = 6000
 JWT_ALGORITHM = 'HS256'
 
 logger = logging.getLogger(__name__)
@@ -30,9 +28,8 @@ def login(body):
 
     timestamp = _current_timestamp()
     payload = {
-        "iss": JWT_ISSUER,
         "iat": int(timestamp),
-        "exp": int(timestamp + JWT_LIFETIME_SECONDS),
+        "exp": int(timestamp + cfg.TOKEN_LIFETIME_SECONDS),
         "sub": str(username),
     }
 
@@ -40,14 +37,14 @@ def login(body):
         'status': 201,
         'title': 'Success',
         'detail': f"User '{username}' successfully logged in",
-        'Authorization': jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        'Authorization': jwt.encode(payload, cfg.TOKEN_SECRET_KEY, algorithm=JWT_ALGORITHM)
     }
     return response, 201
 
 
 def decode_token(token):
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return jwt.decode(token, cfg.TOKEN_SECRET_KEY, algorithms=[JWT_ALGORITHM])
     except JWTError:
         abort(401, "Invalid authentication token")
 

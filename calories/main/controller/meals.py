@@ -124,4 +124,3 @@ def delete(user, username, id):
     db.session.delete(meal)
     db.session.commit()
     return make_response(jsonify({'message': f"Meal '{id}' deleted", 'success': True}), 200)
-

@@ -1,12 +1,12 @@
-import os
 import unittest
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
-from calories.main import create_app, db
+from calories.main import create_app
+from calories.main import build_database
 
-connex_app = create_app(os.getenv('CALORIES_ENV') or 'dev')
+connex_app = create_app()
 
 app = connex_app.app
 
@@ -14,9 +14,10 @@ app.app_context().push()
 
 manager = Manager(app)
 
-migrate = Migrate(app, db)
 
-manager.add_command('db', MigrateCommand)
+@manager.command
+def build_db():
+    build_database.build_db()
 
 
 @manager.command
