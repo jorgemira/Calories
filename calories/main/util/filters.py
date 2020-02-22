@@ -7,6 +7,12 @@ from werkzeug.exceptions import abort
 
 
 def to_fiql(filter_spec):
+    """
+    Transform a filter specification in out format to Fiql
+    :param filter_spec:
+    :type filter_spec: str
+    :return:
+    """
     transformations = [(r'\beq\b', r'=='),
                        (r'\bne\b', r'!='),
                        (r'\bgt\b', r'=gt='),
@@ -24,6 +30,12 @@ def to_fiql(filter_spec):
 
 
 def to_sql_alchemy(filter_spec):
+    """
+    Transform a Fiql object into a SQLAlchemy filter expression
+    :param filter_spec: Fiql object containing the filter
+    :type filter_spec: dict
+    :return: The SQLAlchemy filter expression
+    """
     if None in filter_spec:
         raise FiqlException
     if isinstance(filter_spec, tuple):
@@ -42,10 +54,23 @@ def to_sql_alchemy(filter_spec):
 
 
 def apply_filter(query, filter_spec=None, page_size=10, page_number=1):
+    """
+    Apply filtering and pagination to any given query
+    :param query: Query to apply filtering to
+    :param filter_spec: Filter to apply to the query
+    :type filter_spec: str
+    :param page_size: Page size used for pagination
+    :type page_size: int
+    :param page_number: Page number used for pagination
+    :type page_number: int
+    :return: The query after applying the filter and pagination options selected, and the pagination information
+    :rtype: tuple
+    """
+
     if filter_spec:
         try:
             query = apply_filters(query, to_sql_alchemy(to_fiql(filter_spec)))
         except (FiqlException, FieldNotFound, BadFilterFormat):
             abort(400, f"Filter '{filter_spec}' is invalid")
-    query, _ = apply_pagination(query, page_number=page_number, page_size=page_size)
-    return query
+    query, pagination = apply_pagination(query, page_number=page_number, page_size=page_size)
+    return query, pagination

@@ -6,7 +6,7 @@ info:
 paths:
   /users:
     get:
-      operationId: calories.main.controller.users.read_all
+      operationId: calories.main.controller.users.read_users
       tags:
         - Users
       summary: Read the entire set of users, sorted by user name
@@ -17,18 +17,20 @@ paths:
       description: Read the entire set of users, sorted by user name
       responses:
         "200":
-          description: Successfully read user set operation
+          description: Successfully read users
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedResponse'
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
       security:
         - jwt: []
 
     post:
-      operationId: calories.main.controller.users.create
+      operationId: calories.main.controller.users.create_user
       tags:
         - Users
       summary: Create a user
@@ -43,13 +45,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/User'
       security:
         - jwt: []
 
   "/users/{username}":
     get:
-      operationId: calories.main.controller.users.read_one
+      operationId: calories.main.controller.users.read_user
       tags:
         - Users
       summary: Read one user
@@ -66,14 +70,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/User'
         "404":
           description: User not found
       security:
         - jwt: []
 
     put:
-      operationId: calories.main.controller.users.update
+      operationId: calories.main.controller.users.update_user
       tags:
         - Users
       summary: Update an user
@@ -98,14 +104,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/User'
         "404":
           description: User not found
       security:
         - jwt: []
 
     delete:
-      operationId: calories.main.controller.users.delete
+      operationId: calories.main.controller.users.delete_user
       tags:
         - Users
       summary: Delete an user
@@ -119,6 +127,12 @@ paths:
       responses:
         "200":
           description: Successfully deleted an user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+                data:
+                  type: string
         "404":
           description: User not found
       security:
@@ -145,14 +159,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Meal'
+                $ref: '#/components/schemas/PaginatedResponse'
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Meal'
       security:
         - jwt: []
 
     post:
-      operationId: calories.main.controller.meals.create
+      operationId: calories.main.controller.meals.create_meal
       tags:
         - Meals
       summary: Create a meal associated with a user
@@ -174,13 +190,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Meal'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/Meal'
       security:
         - jwt: []
 
   "/users/{username}/meals/{id}":
     get:
-      operationId: calories.main.controller.meals.read_one
+      operationId: calories.main.controller.meals.read_meal
       tags:
         - Meals
       summary: Read a particular meal associated with a user
@@ -203,14 +221,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Meal'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/Meal'
         "404":
           description: Meal not found
       security:
         - jwt: []
 
     put:
-      operationId: calories.main.controller.meals.update
+      operationId: calories.main.controller.meals.update_meal
       tags:
         - Meals
       summary: Update a meal associated with a user
@@ -239,14 +259,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Meal'
+                $ref: '#/components/schemas/Response'
+                data:
+                  $ref: '#/components/schemas/Meal'
         "404":
           description: Meal not found
       security:
         - jwt: []
 
     delete:
-      operationId: calories.main.controller.meals.delete
+      operationId: calories.main.controller.meals.delete_meal
       tags:
         - Meals
       summary: Delete an entry associated with an user
@@ -266,6 +288,12 @@ paths:
       responses:
         "200":
           description: Successfully deleted a meal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+                data:
+                  type: string
         "404":
           description: Meal not found
       security:
@@ -360,6 +388,28 @@ components:
           type: boolean
           readOnly: true
           description: Calories of the meal
+
+    Response:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: Status code of the request
+        title:
+          type: string
+          description: Name of the status code
+        detail:
+          type: string
+          description: Description of the request result
+
+    PaginatedResponse:
+      $ref: '#/components/schemas/Response'
+      numPages:
+        type: integer
+        description: Total number of pages
+      totalResults:
+        type: integer
+        description: Total results of the request
 
   parameters:
     filterParam:

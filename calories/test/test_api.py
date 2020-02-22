@@ -38,9 +38,11 @@ class TestAPI(BaseTestCase):
 
     def _check_succes(self, expected, response, code):
         data = json.loads(response.data.decode())
-        self.assertEqual(data, expected)
-        self.assertEqual(response.status_code, code)
+        self.assertEqual(data['status'], code)
+        self.assertEqual(data['title'], 'Success')
+        self.assertEqual(data['data'], expected)
         self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.status_code, code)
 
     def test_login(self):
         path = 'api/login'
@@ -240,7 +242,7 @@ class TestAPI(BaseTestCase):
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
             # User can delete himself
-            expected = {'message': "User 'user1' deleted", 'success': True}
+            expected = None
             auth_token = self._login('user1', 'pass_user1')
             headers = {'accept': 'application/json', 'Authorization': f'Bearer {auth_token}'}
             response = self.delete('/'.join([path, 'user1']), headers)
@@ -469,7 +471,7 @@ class TestAPI(BaseTestCase):
             self._check_error(response, 401, 'Unauthorized', 'No authorization token provided')
 
             # Admin can delete a meal
-            expected = {'message': "Meal '1' deleted", 'success': True}
+            expected = None
             auth_token = self._login()
             headers = {'accept': 'application/json', 'Authorization': f'Bearer {auth_token}'}
             response = self.delete(path_meal1, headers)
@@ -490,7 +492,7 @@ class TestAPI(BaseTestCase):
             self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
 
             # User can delete his own meals
-            expected = {'message': "Meal '2' deleted", 'success': True}
+            expected = None
             path_meal2 = '/'.join([path, 'user1', 'meals', '2'])
             auth_token = self._login('user1', 'pass_user1')
             headers_user1 = {'accept': 'application/json', 'Authorization': f'Bearer {auth_token}'}

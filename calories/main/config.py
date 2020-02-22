@@ -10,14 +10,14 @@ class Config:
     NTX_BASE_URL = os.getenv('NTX_BASE_URL', 'https://api.nutritionix.com/v1_1')
     NTX_APP_ID = os.getenv('NTX_APP_ID', '29787544')
     NTX_API_KEY = os.getenv('NTX_API_KEY', 'e0ecc4ea5307e6392caba2dd9023085f')
-
+    SWAGGER_UI = False
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_calories_main.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-
+    SWAGGER_UI = True
 
 class TestingConfig(Config):
     DEBUG = True

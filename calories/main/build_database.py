@@ -15,6 +15,11 @@ ADMNIN_USER = {
 
 
 def build_db():
+    """This function recreates the database, drops any existing version, creates a new one and adds the default admin
+    user
+
+    :rtype: None
+    """
     # Clean database
     db.drop_all()
 
@@ -28,6 +33,10 @@ def build_db():
 
 
 def populate_db():
+    """Populate the database using sample data
+
+    :rtype: None
+    """
     users = [
         {
             "username": "user1",

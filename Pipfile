@@ -4,6 +4,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flask-testing = "*"
+sphinx = "*"
+connexion = {extras = ["swagger-ui"],version = "*"}
 
 [packages]
 flask = "*"
@@ -12,14 +15,11 @@ requests = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 marshmallow-enum = "*"
-connexion = {extras = ["swagger-ui"],version = "*"}
+connexion =  "*"
 marshmallow-sqlalchemy = "*"
 fiql-parser = "*"
 sqlalchemy-filters = "*"
-pytest = "*"
 psycopg2 = "*"
-flask-testing = "*"
-flask-migrate = "*"
 flask-script = "*"
 
 [requires]

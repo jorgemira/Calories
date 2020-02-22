@@ -1,3 +1,6 @@
+"""
+This module contains all the Models for the communication with the database
+"""
 from enum import Enum
 
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -7,12 +10,16 @@ from calories.main import db, ma
 
 
 class Role(str, Enum):
+    """
+    Enum for Role types
+    """
     USER = 'USER'
     MANAGER = 'MANAGER'
     ADMIN = 'ADMIN'
 
 
 class User(db.Model):
+    """Database Model Class for users"""
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True)
@@ -38,6 +45,7 @@ class User(db.Model):
 
 
 class Meal(db.Model):
+    """Database Model Class for meals"""
     __tablename__ = "meal"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
