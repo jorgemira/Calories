@@ -1,7 +1,6 @@
 import unittest
 
-from fiql_parser import FiqlException
-from sqlalchemy_filters.exceptions import InvalidPage, FieldNotFound
+from sqlalchemy_filters.exceptions import InvalidPage
 from werkzeug.exceptions import BadRequest
 
 from calories.main.models.models import User
@@ -29,7 +28,8 @@ class TestExternalAPIs(BaseTestCase):
         self.assertEqual(len(filtered), 1)
         self.assertEqual(filtered[0].username, 'admin')
 
-        filtered = apply_filter(users, "username ne 'user1' AND (daily_calories lt 3000 AND daily_calories gt 1000)").all()
+        filtered = apply_filter(users,
+                                "username ne 'user1' AND (daily_calories lt 3000 AND daily_calories gt 1000)").all()
         self.assertEqual(len(filtered), 1)
         self.assertEqual(filtered[0].username, 'manager1')
 

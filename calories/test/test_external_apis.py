@@ -48,7 +48,7 @@ class TestExternalAPIs(BaseTestCase):
         self.assertEqual(calories_from_nutritionix('tomatoes'), 0)
 
         # Connection error
-        self.assertEqual(calories_from_nutritionix('carrot'), 0)
+        self.assertEqual(calories_from_nutritionix('icecream'), 0)
 
 
 if __name__ == '__main__':
