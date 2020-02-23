@@ -75,7 +75,7 @@ def create_user(user, body):
     :type user: str
     :param body: Information of the new user
     :type body: dict
-    :return: Succes message, 409 if user already exists, 401 if role is wrong, 400 if wrong username
+    :return: Succes message, 409 if user already exists, 403 if role is wrong, 400 if wrong username
     """
     username = body.get("username")
     existing_user = User.query.filter(User.username == username).one_or_none()
@@ -91,7 +91,7 @@ def create_user(user, body):
     if owner.role == Role.MANAGER and new_user.role != Role.USER:
         logger.warning(f"User: '{user}' with role '{owner.role}' tried to create user: '{username}' with role "
                        f"'{new_user.role}'")
-        abort(401, f"User '{user}' can only create users with role USER")
+        abort(403, f"User '{user}' can only create users with role USER")
 
     if not body['username'].isalnum():
         logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with username "
@@ -122,7 +122,7 @@ def update_user(user, username, body):
     :type username: str
     :param body: Information of the new user to be created
     :type body: dict
-    :return: Success message or 401 if there are role issues or 400 if the username is wrong
+    :return: Success message or 403 if there are role issues or 400 if the username is wrong
     """
     u_user = get_user(username)
     owner = get_user(user)
@@ -133,7 +133,7 @@ def update_user(user, username, body):
     if updated.role and updated.role != u_user.role and owner.role != Role.ADMIN:
         logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with role "
                        f"'{u_user.role}'")
-        abort(401, f"User '{user}' is not allowed to change Role")
+        abort(403, f"User '{user}' is not allowed to change Role")
 
     if not body.get('username', 'a').isalnum():
         logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with username "
@@ -172,7 +172,7 @@ def delete_user(user, username):
     if owner.role == Role.MANAGER and d_user.role != Role.USER:
         logger.warning(f"User: '{user}' with role '{owner.role}' failed to delete user: '{username}' with role "
                        f"'{d_user.username}'")
-        abort(401, f"User '{user}' can only delete users with role USER")
+        abort(403, f"User '{user}' can only delete users with role USER")
 
     db.session.delete(d_user)
     db.session.commit()

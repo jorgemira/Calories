@@ -40,15 +40,15 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'user2', 'meals'])
         with self.client:
             response = self.get(path, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
+            self._check_error(response, 403, 'Forbidden', "User 'user1' cannot perform the action for other user")
 
     def test_get_user_manager_others(self):
         """Managers are not allowed to see other meals"""
         path = '/'.join([self.path, 'users', 'user1', 'meals'])
         with self.client:
             response = self.get(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_get_user_meals_managers_himself(self):
@@ -56,8 +56,8 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'manager1', 'meals'])
         with self.client:
             response = self.get(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_post_meal_unauthenticated(self):
@@ -138,7 +138,7 @@ class TestMeals(TestAPI):
             request_data = {"date": '2020-02-12', "time": '15:05:28', "name": "meal 4", "grams": 800,
                             "description": "Meal 4 User 1", "calories": 500}
             response = self.post(path, request_data, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
+            self._check_error(response, 403, 'Forbidden', "User 'user1' cannot perform the action for other user")
 
     def test_post_manager_others(self):
         """Managers cannot add meals to other users"""
@@ -147,8 +147,8 @@ class TestMeals(TestAPI):
             request_data = {"date": '2020-02-12', "time": '15:05:28', "name": "meal 4", "grams": 800,
                             "description": "Meal 4 User 1", "calories": 500}
             response = self.post(path, request_data, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_post_meal_manager_himself(self):
@@ -158,8 +158,8 @@ class TestMeals(TestAPI):
             request_data = {"date": '2020-02-12', "time": '15:05:28', "name": "meal 4", "grams": 800,
                             "description": "Meal 4 User 1", "calories": 500}
             response = self.post(path, request_data, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_delete_meal_unauthenticated(self):
@@ -191,7 +191,7 @@ class TestMeals(TestAPI):
         with self.client:
             # User cannot delete other users meals
             response = self.delete(path, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
+            self._check_error(response, 403, 'Forbidden', "User 'user1' cannot perform the action for other user")
 
     def test_delete_meal_user_himself(self):
         """User can delete his own meals"""
@@ -213,8 +213,8 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'manager1', 'meals', '1'])
         with self.client:
             response = self.delete(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_delete_meal_manager_others(self):
@@ -222,8 +222,8 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'user2', 'meals', '1'])
         with self.client:
             response = self.delete(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_get_meal_unauthenticated(self):
@@ -254,7 +254,7 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'user2', 'meals', '3'])
         with self.client:
             response = self.get(path, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
+            self._check_error(response, 403, 'Forbidden', "User 'user1' cannot perform the action for other user")
 
     def test_get_meal_user_own(self):
         """User can get his own meals"""
@@ -277,8 +277,8 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'manager1', 'meals', '1'])
         with self.client:
             response = self.get(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_get_meal_manager_others(self):
@@ -286,8 +286,8 @@ class TestMeals(TestAPI):
         path = '/'.join([self.path, 'users', 'manager2', 'meals', '1'])
         with self.client:
             response = self.get(path, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_put_meal_unauthenticated(self):
@@ -321,7 +321,7 @@ class TestMeals(TestAPI):
         with self.client:
             request_data = {'calories': 500, 'description': 'Meal 1 User 1b', 'grams': 800, 'name': 'meal 1b'}
             response = self.put(path, request_data, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'user1' cannot perform the action for other user")
+            self._check_error(response, 403, 'Forbidden', "User 'user1' cannot perform the action for other user")
 
     def test_put_meal_user_own(self):
         """User can put his own meals"""
@@ -347,8 +347,8 @@ class TestMeals(TestAPI):
         with self.client:
             request_data = {'calories': 5000, 'date': '2020-02-13'}
             response = self.put(path, request_data, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
     def test_put_meal_manager_others(self):
@@ -357,8 +357,8 @@ class TestMeals(TestAPI):
         with self.client:
             request_data = {'calories': 5000, 'date': '2020-02-13'}
             response = self.put(path, request_data, self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'manager1' belongs to the role 'MANAGER' and is not allowed to perform the action")
 
 

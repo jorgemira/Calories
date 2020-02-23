@@ -104,10 +104,10 @@ def is_allowed(roles_allowed=None, allow_self=False, only_allow_self=False):
 
             if only_allow_self:
                 if user.role not in roles_allowed:
-                    abort(401, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
+                    abort(403, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
                                f" perform the action")
                 if user.username != kwargs.get('username', user.username):
-                    abort(401, f"User '{kwargs['user']}' cannot perform the action for other user")
+                    abort(403, f"User '{kwargs['user']}' cannot perform the action for other user")
                 logger.info(f"User '{user.username}' with role '{user.role}' succesfully called '{func.__name__}' with "
                             f"args='{args}' and kwargs='{kwargs}'")
                 return func(*args, **kwargs)
@@ -117,7 +117,7 @@ def is_allowed(roles_allowed=None, allow_self=False, only_allow_self=False):
                             f"args='{args}' and kwargs='{kwargs}'")
                 return func(*args, **kwargs)
             else:
-                abort(401, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
+                abort(403, f"User '{kwargs['user']}' belongs to the role '{user.role}' and is not allowed to"
                            f" perform the action")
 
         return wrapped

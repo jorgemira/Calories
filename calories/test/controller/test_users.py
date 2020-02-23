@@ -38,8 +38,8 @@ class TestUsers(TestAPI):
         path = '/'.join([self.path, 'users'])
         with self.client:
             response = self.get(path, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
     def test_get_all_users_manager_allowed(self):
@@ -165,8 +165,8 @@ class TestUsers(TestAPI):
                             'password': 'pass_user4'}
 
             response = self.post(path, request_data, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
     def test_post_user_manager_add_user(self):
@@ -196,8 +196,8 @@ class TestUsers(TestAPI):
         path = '/'.join([self.path, 'users'])
         with self.client:
             response = self.delete('/'.join([path, 'manager1']), self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
     def test_delete_user_user_himself(self):
@@ -213,7 +213,7 @@ class TestUsers(TestAPI):
         path = '/'.join([self.path, 'users'])
         with self.client:
             response = self.delete('/'.join([path, 'manager2']), self._get_headers('manager1', 'pass_manager1'))
-            self._check_error(response, 401, 'Unauthorized', "User 'manager1' can only delete users with role USER")
+            self._check_error(response, 403, 'Forbidden', "User 'manager1' can only delete users with role USER")
 
     def test_delete_user_not_exists(self):
         """Error deleting non existing user"""
@@ -234,8 +234,8 @@ class TestUsers(TestAPI):
         path = '/'.join([self.path, 'users'])
         with self.client:
             response = self.get('/'.join([path, 'manager1']), self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
     def test_get_user_himself(self):
@@ -277,8 +277,8 @@ class TestUsers(TestAPI):
         with self.client:
             request_data = {'username': 'admin', 'password': 'admin1234'}
             response = self.put('/'.join([path, 'manager1']), request_data, self._get_headers('user1', 'pass_user1'))
-            self._check_error(response, 401,
-                              'Unauthorized',
+            self._check_error(response, 403,
+                              'Forbidden',
                               "User 'user1' belongs to the role 'USER' and is not allowed to perform the action")
 
     def test_put_user_user_himself(self):

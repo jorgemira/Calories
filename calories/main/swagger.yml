@@ -11,21 +11,19 @@ paths:
         - Users
       summary: Read the entire set of users, sorted by user name
       parameters:
-        - $ref: '#/components/parameters/filterParam'
-        - $ref: '#/components/parameters/itemsPerPageParam'
-        - $ref: '#/components/parameters/pageNumberParam'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/ItemsPerPage'
+        - $ref: '#/components/parameters/PageNumber'
       description: Read the entire set of users, sorted by user name
       responses:
-        "200":
-          description: Successfully read users
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedResponse'
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/User'
+        200:
+          $ref: '#/components/responses/SuccessUsers'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -40,41 +38,39 @@ paths:
         description: User to create
         required: true
       responses:
-        "201":
-          description: Successfully created user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/User'
+        201:
+          $ref: '#/components/responses/SuccessUser'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
       security:
         - jwt: []
 
-  "/users/{username}":
+  /users/{username}:
+    parameters:
+      - $ref: '#/components/parameters/UserName'
+
     get:
       operationId: calories.main.controller.users.read_user
       tags:
         - Users
       summary: Read one user
-      parameters:
-        - name: username
-          in: path
-          description: Username of the user to get
-          required: true
-          schema:
-            type: string
       responses:
-        "200":
-          description: Successfully read user from users data operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/User'
-        "404":
-          description: User not found
+        200:
+          $ref: '#/components/responses/SuccessUser'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -84,13 +80,6 @@ paths:
         - Users
       summary: Update an user
       description: Update an user
-      parameters:
-        - name: username
-          in: path
-          description: username to update
-          required: true
-          schema:
-            type: string
       requestBody:
         description: User to update
         required: true
@@ -99,16 +88,14 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        "200":
-          description: Successfully updated user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/User'
-        "404":
-          description: User not found
+        200:
+          $ref: '#/components/responses/SuccessUser'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -117,53 +104,40 @@ paths:
       tags:
         - Users
       summary: Delete an user
-      parameters:
-        - name: username
-          in: path
-          description: Username of the user to delete
-          required: true
-          schema:
-            type: string
       responses:
-        "200":
-          description: Successfully deleted an user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  type: string
-        "404":
-          description: User not found
+        200:
+          $ref: '#/components/responses/SuccessString'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
-  "/users/{username}/meals":
+  /users/{username}/meals:
+    parameters:
+      - $ref: '#/components/parameters/UserName'
+
     get:
       operationId: calories.main.controller.meals.read_meals
       tags:
         - Meals
       summary: Read all the meals associated with an user
       parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-        - $ref: '#/components/parameters/filterParam'
-        - $ref: '#/components/parameters/itemsPerPageParam'
-        - $ref: '#/components/parameters/pageNumberParam'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/ItemsPerPage'
+        - $ref: '#/components/parameters/PageNumber'
       responses:
-        "200":
-          description: Successfully read meals for user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedResponse'
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Meal'
+        200:
+          $ref: '#/components/responses/SuccessMeals'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -173,59 +147,47 @@ paths:
         - Meals
       summary: Create a meal associated with a user
       description: Create a meal associated with a user
-      parameters:
-        - name: username
-          in: path
-          description: Username of the person whose meal to update
-          required: true
-          schema:
-            type: string
       requestBody:
         $ref: '#/components/requestBodies/Meal'
         description: Meal to update
         required: true
       responses:
-        "201":
-          description: Successfully updated meal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/Meal'
+        201:
+          $ref: '#/components/responses/SuccessMeal'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
       security:
         - jwt: []
 
-  "/users/{username}/meals/{id}":
+  /users/{username}/meals/{id}:
+    parameters:
+      - $ref: '#/components/parameters/UserName'
+      - $ref: '#/components/parameters/MealId'
+
     get:
       operationId: calories.main.controller.meals.read_meal
       tags:
         - Meals
       summary: Read a particular meal associated with a user
-      parameters:
-        - name: username
-          in: path
-          description: Username associated with meal
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Id of the meal
-          required: true
-          schema:
-            type: integer
       responses:
-        "200":
-          description: Successfully read meal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/Meal'
-        "404":
-          description: Meal not found
+        200:
+          $ref: '#/components/responses/SuccessMeal'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -234,36 +196,23 @@ paths:
       tags:
         - Meals
       summary: Update a meal associated with a user
-      description: Update a note associated with a person
-      parameters:
-        - name: username
-          in: path
-          description: Username of the person whose meal to update
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Id of the meal
-          required: true
-          schema:
-            type: integer
+      description: Update a meal associated with a person
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        "200":
-          description: Successfully updated meal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  $ref: '#/components/schemas/Meal'
-        "404":
-          description: Meal not found
+        200:
+          $ref: '#/components/responses/SuccessMeal'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -272,30 +221,15 @@ paths:
       tags:
         - Meals
       summary: Delete an entry associated with an user
-      parameters:
-        - name: username
-          in: path
-          description: Username associated with meal
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Id of meal
-          required: true
-          schema:
-            type: integer
       responses:
-        "200":
-          description: Successfully deleted a meal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response'
-                data:
-                  type: string
-        "404":
-          description: Meal not found
+        200:
+          $ref: '#/components/responses/SuccessString'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -309,17 +243,23 @@ paths:
         $ref: '#/components/requestBodies/Login'
         required: true
       responses:
-        '200':
+        201:
           description: JWT token
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
+                $ref: '#/components/schemas/Response'
+                data:
+                  Authorization:
                     type: string
-                    description: Token
-
+                required:
+                  - Authorization
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
 servers:
   - url: /api
 
@@ -389,6 +329,23 @@ components:
           readOnly: true
           description: Calories of the meal
 
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+        status:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+      required:
+        - detail
+        - status
+        - title
+        - type
+
     Response:
       type: object
       properties:
@@ -401,6 +358,10 @@ components:
         detail:
           type: string
           description: Description of the request result
+      required:
+        - detail
+        - status
+        - title
 
     PaginatedResponse:
       $ref: '#/components/schemas/Response'
@@ -412,14 +373,33 @@ components:
         description: Total results of the request
 
   parameters:
-    filterParam:
+    UserName:
+      name: username
+      in: path
+      description: Username of the user to perform the action
+      required: true
+      schema:
+        type: string
+      example: username1
+
+    MealId:
+      name: id
+      in: path
+      description: Id of meal
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+      example: 1
+
+    Filter:
       name: filter
       in: query
       description: Filtering for results
       schema:
         type: string
 
-    itemsPerPageParam:
+    ItemsPerPage:
       name: itemsPerPage
       schema:
         type: integer
@@ -428,7 +408,7 @@ components:
       in: query
       description: Items per page
 
-    pageNumberParam:
+    PageNumber:
       name: pageNumber
       schema:
         type: integer
@@ -482,6 +462,90 @@ components:
               - username
               - password
 
+  responses:
+    BadRequest:
+      description: The request is invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: The user is not authenticated to perform the action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: The user does not have the right permissions to perform the action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: The specified request was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Conflict:
+      description: The specified object already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    SuccessUsers:
+      description: Successfully read users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedResponse'
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+
+    SuccessUser:
+      description: Action performed on user successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+            data:
+              $ref: '#/components/schemas/User'
+
+    SuccessString:
+      description: The action has been succesfully performed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+            data:
+              type: string
+
+    SuccessMeals:
+      description: Successfully read meals for user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedResponse'
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Meal'
+
+    SuccessMeal:
+      description: Successfully updated meal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+            data:
+              $ref: '#/components/schemas/Meal'
 
   securitySchemes:
     jwt:
