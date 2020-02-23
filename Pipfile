@@ -10,6 +10,7 @@ connexion = {extras = ["swagger-ui"],version = "*"}
 
 [packages]
 flask = "*"
+werkzeug = {version = "==0.16.1"}
 python-jose = {extras = ["cryptography"],version = "*"}
 requests = "*"
 flask-sqlalchemy = "*"
