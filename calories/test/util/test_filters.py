@@ -1,3 +1,5 @@
+"""Test module for calories.main.util.filters"""
+
 import unittest
 
 from sqlalchemy_filters.exceptions import InvalidPage
@@ -5,10 +7,12 @@ from werkzeug.exceptions import BadRequest
 
 from calories.main.models.models import User
 from calories.main.util.filters import apply_filter
-from calories.test.base import BaseTestCase
+from calories.test import BaseTestCase
 
 
 class TestExternalAPIs(BaseTestCase):
+    """Test class for calories.main.util.filters"""
+
     def setUp(self):
         super().setUp()
         self.users = User.query.order_by(User.username)

@@ -1,10 +1,12 @@
+"""Test module for calories.main.util.external_apis"""
+
 import unittest
 from unittest.mock import patch
 
 from requests import ConnectionError
 
 from calories.main.util.external_apis import calories_from_nutritionix
-from calories.test.base import BaseTestCase
+from calories.test import BaseTestCase
 
 
 def mocked_requests_get(*args, **kwargs):
@@ -35,6 +37,7 @@ def mocked_requests_get(*args, **kwargs):
 
 
 class TestExternalAPIs(BaseTestCase):
+    """Test class for calories.main.util.external_apis"""
 
     @patch('requests.get')
     def test_calories_from_nutritionix_success(self, mock_get):
@@ -45,7 +48,7 @@ class TestExternalAPIs(BaseTestCase):
     @patch('requests.get')
     def test_calories_from_nutritionix_wrong_JSON(self, mock_get):
         """Server returns wrong JSON"""
-        mock_get.side_effect=mocked_requests_get
+        mock_get.side_effect = mocked_requests_get
         self.assertEqual(calories_from_nutritionix('custard'), 0)
 
     @patch('requests.get')
