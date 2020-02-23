@@ -3,7 +3,7 @@ import unittest
 from flask_script import Manager
 
 from calories.main import build_database
-from calories.main import create_app
+from calories.main import create_app, cfg
 
 connex_app = create_app()
 
@@ -21,7 +21,7 @@ def build_db():
 
 @manager.command
 def run():
-    connex_app.run()
+    connex_app.run(port=cfg.PORT)
 
 
 @manager.command

@@ -11,6 +11,8 @@ class Config:
     NTX_APP_ID = os.getenv('NTX_APP_ID', '29787544')
     NTX_API_KEY = os.getenv('NTX_API_KEY', 'e0ecc4ea5307e6392caba2dd9023085f')
     SWAGGER_UI = False
+    PORT = 8080
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -18,6 +20,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
     SWAGGER_UI = True
+
 
 class TestingConfig(Config):
     DEBUG = True
