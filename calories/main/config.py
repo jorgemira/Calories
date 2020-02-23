@@ -4,12 +4,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    PORT = 8080
-    ADDRESS = os.getenv('CLS_ADDRESS', '0.0.0.0')
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SWAGGER_UI = False
-    TOKEN_SECRET_KEY = os.getenv('CLS_TOKEN_SECRET_KEY', '*&UbA>>D5nj6S_6KaIp*$5sppQS-B')
+    ADDRESS = os.getenv('CLS_ADDRESS', '0.0.0.0')
+    PORT = os.getenv('CLS_PORT', '8080')
+    TOKEN_SECRET_KEY = os.getenv('CLS_TOKEN_SECRET_KEY', 'secret_string')
     TOKEN_LIFETIME_SECONDS = os.getenv('CLS_TOKEN_LIFETIME_SECONDS', 1800)
     NTX_BASE_URL = os.getenv('CLS_NTX_BASE_URL', 'https://api.nutritionix.com/v1_1')
     NTX_APP_ID = os.getenv('CLS_NTX_APP_ID', '29787544')

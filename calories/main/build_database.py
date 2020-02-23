@@ -1,7 +1,10 @@
+import logging
 from datetime import date, time
 
 from calories.main import db
 from calories.main.models.models import User, Meal
+
+logger = logging.getLogger(__name__)
 
 ADMNIN_USER = {
     "username": "admin",
@@ -22,14 +25,19 @@ def build_db():
     """
     # Clean database
     db.drop_all()
+    logger.info("Old database tables (if any) dropped")
 
     # Create the database
     db.create_all()
+    logger.info("Created new database tables")
+
     # Create admin user
     db.session.add(User(**ADMNIN_USER))
+    logger.warning("Admin user has been created. Please remeber to change its password")
 
     # Save changes to database
     db.session.commit()
+    logger.info("Database built successfully")
 
 
 def populate_db():
@@ -120,6 +128,7 @@ def populate_db():
                                 description=meal.get('description'),
                                 calories=meal.get('calories')))
         db.session.add(u)
+        logger.info(f"User: '{user['username']}' added successfully to users")
 
     db.session.commit()
 
