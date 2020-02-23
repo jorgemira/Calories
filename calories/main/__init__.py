@@ -8,7 +8,7 @@ from .config import config_by_name, basedir
 
 db = SQLAlchemy()
 ma = Marshmallow()
-cfg = config_by_name[os.getenv('CALORIES_ENV') or 'dev']
+cfg = config_by_name[os.getenv('CLS_ENV') or 'dev']
 logger = None
 
 

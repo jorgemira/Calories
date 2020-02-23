@@ -2,8 +2,10 @@ import unittest
 
 from flask_script import Manager
 
+from calories.deploy import gunicorn
 from calories.main import build_database
 from calories.main import create_app, cfg
+from calories.main.config import ProductionConfig
 
 connex_app = create_app()
 
@@ -21,7 +23,10 @@ def build_db():
 
 @manager.command
 def run():
-    connex_app.run(port=cfg.PORT)
+    if isinstance(cfg, ProductionConfig):
+        gunicorn.run(connex_app)
+    else:
+        connex_app.run(port=cfg.PORT)
 
 
 @manager.command

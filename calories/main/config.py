@@ -4,20 +4,24 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    DEBUG = False
-    TOKEN_SECRET_KEY = os.getenv('TOKEN_SECRET_KEY', '*&UbA>>D5nj6S_6KaIp*$5sppQS-B')
-    TOKEN_LIFETIME_SECONDS = os.getenv('TOKEN_LIFETIME_SECONDS', 1800)
-    NTX_BASE_URL = os.getenv('NTX_BASE_URL', 'https://api.nutritionix.com/v1_1')
-    NTX_APP_ID = os.getenv('NTX_APP_ID', '29787544')
-    NTX_API_KEY = os.getenv('NTX_API_KEY', 'e0ecc4ea5307e6392caba2dd9023085f')
-    SWAGGER_UI = False
     PORT = 8080
+    ADDRESS = os.getenv('CLS_ADDRESS', '0.0.0.0')
+    DEBUG = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SWAGGER_UI = False
+    TOKEN_SECRET_KEY = os.getenv('CLS_TOKEN_SECRET_KEY', '*&UbA>>D5nj6S_6KaIp*$5sppQS-B')
+    TOKEN_LIFETIME_SECONDS = os.getenv('CLS_TOKEN_LIFETIME_SECONDS', 1800)
+    NTX_BASE_URL = os.getenv('CLS_NTX_BASE_URL', 'https://api.nutritionix.com/v1_1')
+    NTX_APP_ID = os.getenv('CLS_NTX_APP_ID', '29787544')
+    NTX_API_KEY = os.getenv('CLS_NTX_API_KEY', 'e0ecc4ea5307e6392caba2dd9023085f')
+    KEYFILE = os.getenv('CLS_KEYFILE', 'certs/server.key')
+    CERTFILE = os.getenv('CLS_CERTFILE', 'certs/server.crt')
+    CACERTS = os.getenv('CLS_CACERTS', 'certs/ca-crt.pem')
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_calories_main.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
     SWAGGER_UI = True
 
@@ -27,7 +31,6 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_calories_test.db')
     PRESERVE_CONTEXT_ON_EXCEPTION = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
 
 

@@ -21,6 +21,7 @@ fiql-parser = "*"
 sqlalchemy-filters = "*"
 psycopg2 = "*"
 flask-script = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
