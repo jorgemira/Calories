@@ -36,18 +36,28 @@ def mocked_requests_get(*args, **kwargs):
 
 class TestExternalAPIs(BaseTestCase):
 
-    @patch('requests.get', side_effect=mocked_requests_get)
-    def test_calories_from_nutritionix(self, mock_get):
-        # Successful request
+    @patch('requests.get')
+    def test_calories_from_nutritionix_success(self, mock_get):
+        """Successful request"""
+        mock_get.side_effect = mocked_requests_get
         self.assertEqual(calories_from_nutritionix('pizza'), 2268.98)
 
-        # Server returns wrong JSON
+    @patch('requests.get')
+    def test_calories_from_nutritionix_wrong_JSON(self, mock_get):
+        """Server returns wrong JSON"""
+        mock_get.side_effect=mocked_requests_get
         self.assertEqual(calories_from_nutritionix('custard'), 0)
 
-        # Wrong API key
+    @patch('requests.get')
+    def test_calories_from_nutritionix_wrong_API_key(self, mock_get):
+        """Wrong API key"""
+        mock_get.side_effect = mocked_requests_get
         self.assertEqual(calories_from_nutritionix('tomatoes'), 0)
 
-        # Connection error
+    @patch('requests.get')
+    def test_calories_from_nutritionix_connection_error(self, mock_get):
+        """Connection error"""
+        mock_get.side_effect = mocked_requests_get
         self.assertEqual(calories_from_nutritionix('icecream'), 0)
 
 
