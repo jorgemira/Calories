@@ -1,19 +1,19 @@
-#Calories REST API
+# Calories REST API
 REST API for the input of calories, Project for Toptal interview of Jorge Mira Yague
 
-##Getting Started
+## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing 
 purposes. 
 
 See [Deployment](#deployment) section for notes on how to deploy the project on a live system.
 
-##Prerequisites
+## Prerequisites
 The requirements for this Application are a Linux environment with Python 3.8 installed and pipenv. 
 
 Given the multiplatform nature of Python, it should work on different environments without any major changes, but it has
 not been tested
 
-##Installing 
+## Installing 
 First of all, clone the repository and move to it
 ```shell script
 git clone git@git.toptal.com:screening/jorge-mira-yague.git
@@ -33,7 +33,7 @@ Once the dependencies are installed, activate the environment:
 pipenv shell
 ```
 
-##Environment variables
+## Environment variables
 The application supports external configuration through environment variables, the supported variables and its default
  values if not previously set are:
 
@@ -60,7 +60,7 @@ The application supports external configuration through environment variables, t
 - **CLS_CACERTS**: Cacerts file for https requests
   - Defaults to: *certs/ca-crt.pem'*
 
-##Running the tests
+## Running the tests
 To run the tests the development dependencies need to bee installed (see [Installing](#installing)).
 
 From the already initialized pipenv run the following command:
@@ -68,7 +68,7 @@ From the already initialized pipenv run the following command:
 (pipenv-env)$ python manage.py test 
 ```
 
-##Generating code documentation
+## Generating code documentation
 Sphinx docstrings have been used through the project, so automatic code documentation can be built using Sphinx in html
 format for an easier read.
 
@@ -80,7 +80,7 @@ development packages installed (see [Installing](#installing))
 (pipenv-env)$ firefox build/html/index.html 
 ```
 
-##Deployment
+## Deployment
 First of all, the database needs to be initialized, so after setting the right environment variables (see 
 [Environment Variables](#environment-variables)), the following command is executed:
 ```shell script
@@ -91,7 +91,7 @@ After the database is built, the app can run using the following command:
 (pipenv-env)$ python manage.py run
 ```
 
-##Endpoints created
+## Endpoints created
 This is a list the endpoints created by the application with their supported actions and their function:
 ###​api/login/
 - **POST**: Returns an authorization token if the user logged in succesfully
@@ -144,7 +144,7 @@ This is an example of a filtering string:
 ```
 The filtering parameter is specified in the query string and has the name *filter*
 
-##Roles
+## Roles
 The application uses three different kind of user roles. Its permisions are as follow  
 - **USER**: 
   - It can login to the application
@@ -162,7 +162,7 @@ The application uses three different kind of user roles. Its permisions are as f
   - It is allowed to perform any operation on both users and meals
   - One default admin user is created when the database is built with username *admin* and password *admin1234* 
 
-##Built With
+## Built With
 * [Pipenv](https://pipenv-fork.readthedocs.io/) - Virual environment and dependency management
 * [Flask](https://flask.palletsprojects.com/) - Web framework
 * [Connexion](https://connexion.readthedocs.io/) - HTTP Request handling
@@ -172,10 +172,10 @@ The application uses three different kind of user roles. Its permisions are as f
 * [Sphinx](https://www.sphinx-doc.org/en/master/) - Automatic Documentation generation from docstrings
 * [FIQL Parser](https://fiql-parser.readthedocs.io/) - Filter parsing
 
-##Authors
+## Authors
 
 * **Jorge Mira Yague** - [jorgemira](https://github.com/jorgemira/)
 
-##License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
