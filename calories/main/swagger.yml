@@ -22,8 +22,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         403:
           $ref: '#/components/responses/Forbidden'
-        404:
-          $ref: '#/components/responses/NotFound'
       security:
         - jwt: []
 
@@ -31,7 +29,7 @@ paths:
       operationId: calories.main.controller.users.create_user
       tags:
         - Users
-      summary: Create a user
+      summary: Create an user
       description: Create a new user
       requestBody:
         $ref: '#/components/requestBodies/User'
@@ -61,7 +59,7 @@ paths:
       operationId: calories.main.controller.users.read_user
       tags:
         - Users
-      summary: Read one user
+      summary: Read an user
       responses:
         200:
           $ref: '#/components/responses/SuccessUser'
@@ -145,8 +143,8 @@ paths:
       operationId: calories.main.controller.meals.create_meal
       tags:
         - Meals
-      summary: Create a meal associated with a user
-      description: Create a meal associated with a user
+      summary: Create a meal associated with an user
+      description: Create a meal associated with an user
       requestBody:
         $ref: '#/components/requestBodies/Meal'
         description: Meal to update
@@ -176,7 +174,7 @@ paths:
       operationId: calories.main.controller.meals.read_meal
       tags:
         - Meals
-      summary: Read a particular meal associated with a user
+      summary: Read a meal associated with an user
       responses:
         200:
           $ref: '#/components/responses/SuccessMeal'
@@ -195,7 +193,7 @@ paths:
       operationId: calories.main.controller.meals.update_meal
       tags:
         - Meals
-      summary: Update a meal associated with a user
+      summary: Update a meal associated with an user
       description: Update a meal associated with a person
       requestBody:
         content:
@@ -220,7 +218,7 @@ paths:
       operationId: calories.main.controller.meals.delete_meal
       tags:
         - Meals
-      summary: Delete an entry associated with an user
+      summary: Delete a meal associated with an user
       responses:
         200:
           $ref: '#/components/responses/SuccessString'
@@ -254,6 +252,11 @@ paths:
                     type: string
                 required:
                   - Authorization
+              example:
+                Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODI1MzU2NzQsImV4cCI6MTU4MjUzNzQ3NCwic3ViIjoiYWRtaW4ifQ.19U9SnWgDIUbh7dXuxbOwD-xNjpryLKn9id4_yCs2_Y"
+                detail: "User 'admin' successfully logged in"
+                status: 201
+                title: Success
         400:
           $ref: '#/components/responses/BadRequest'
         401:
@@ -292,6 +295,16 @@ components:
           format: password
           minLength: 6
           description: Password of the user
+      required:
+        - username
+        - password
+      example:
+        username: JohnDoe
+        name: "John Doe"
+        email: john.doe@users.com
+        role: USER
+        daily_calories: 2500
+        password: password_john
 
     Meal:
       type: object
@@ -328,6 +341,16 @@ components:
           type: boolean
           readOnly: true
           description: Calories of the meal
+      required:
+        - name
+        - date
+      example:
+        date: 2020-02-20
+        time: "13:45:00"
+        name: Pizza
+        grams: 300
+        description: Medium sized anchovies pizza
+        calories: 900
 
     Error:
       type: object
@@ -398,6 +421,7 @@ components:
       description: Filtering for results
       schema:
         type: string
+      example: (field1 ne 'value1') OR ((field2 gt 0) AND (field2 lt 2000))
 
     ItemsPerPage:
       name: itemsPerPage
@@ -461,6 +485,9 @@ components:
             required:
               - username
               - password
+            example:
+              username: user1
+              password: p4ssw0rd
 
   responses:
     BadRequest:
@@ -469,6 +496,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            detail: Request body is not valid JSON
+            status: 400
+            title: Bad Request
+            type: "about:blank"
 
     Unauthorized:
       description: The user is not authenticated to perform the action
@@ -476,6 +508,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            detail: No authorization token provided
+            status: 401
+            title: Unauthorized
+            type: "about:blank"
 
     Forbidden:
       description: The user does not have the right permissions to perform the action
@@ -483,6 +520,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            detail: "User 'user1' belongs to the role 'USER' and is not allowed to perform the action"
+            status: 403
+            title: Forbidden
+            type: "about:blank"
 
     NotFound:
       description: The specified request was not found
@@ -490,6 +532,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            detail: "User 'user1' not found"
+            status: 404
+            title: Not Found
+            type: "about:blank"
 
     Conflict:
       description: The specified object already exists
@@ -497,6 +544,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            detail: "User 'user1' exists already"
+            status: 404
+            title: Not Found
+            type: "about:blank"
 
     SuccessUsers:
       description: Successfully read users
@@ -508,6 +560,33 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/User'
+          example:
+            detail: List of users succesfully read
+            status: 200
+            title: Success
+            numPages: 1
+            totalResults: 4
+            data:
+              - username: admin
+                daily_calories: 0
+                email: admin@adminmail.com
+                name: Administrator
+                role: ADMIN,
+              - username: manager1
+                daily_calories: 2000
+                email: manager1@managermail.com
+                name: Manager 1
+                role: MANAGER
+              - username: user1
+                daily_calories: 2500
+                email: user1@usermail.com
+                name: User 1
+                role: USER
+              - username: user2
+                daily_calories: 3000
+                email: user2@usemail.com
+                name: User 2
+                role: USER
 
     SuccessUser:
       description: Action performed on user successfully
@@ -517,6 +596,16 @@ components:
             $ref: '#/components/schemas/Response'
             data:
               $ref: '#/components/schemas/User'
+          example:
+            detail: "The action has been successuflly applied to user 'JohnDoe'"
+            status: 200
+            title: Success
+            data:
+              username: JohnDoe
+              daily_calories: 2500
+              email: john.doe@users.com
+              name: John Doe
+              role: USER
 
     SuccessString:
       description: The action has been succesfully performed
@@ -526,6 +615,11 @@ components:
             $ref: '#/components/schemas/Response'
             data:
               type: string
+          example:
+            detail: Action performed successfully
+            status: 200
+            title: Success
+            data: null
 
     SuccessMeals:
       description: Successfully read meals for user
@@ -536,7 +630,30 @@ components:
             data:
               type: array
               items:
-                $ref: '#/components/schemas/Meal'
+              $ref: '#/components/schemas/Meal'
+          example:
+            detail: "List of meals succesfully read for user: 'user1'"
+            num_pages: 1
+            status: 200
+            title: Success
+            total_result: 2
+            data:
+              - id: 1
+                calories: 500
+                date: 2020-02-11
+                description: Meal 1 User 1
+                grams: 100
+                name: meal 1
+                time: 15:00:03
+                under_daily_total: true
+              - id: 2
+                calories: 2100
+                date: 2020-02-11
+                description: Meal 2 User 1
+                grams: 100
+                name: meal 2
+                time: "15:10:03"
+                under_daily_total: true
 
     SuccessMeal:
       description: Successfully updated meal
@@ -546,6 +663,19 @@ components:
             $ref: '#/components/schemas/Response'
             data:
               $ref: '#/components/schemas/Meal'
+          example:
+            detail: "The action has been successuflly applied to meal with id '1'"
+            status: 200
+            title: Success
+            data:
+              id: 1
+              calories: 500
+              date: 2020-02-11
+              description: Meal 1 User 1
+              grams: 100
+              name: meal 1
+              time: "15:00:03"
+              under_daily_total: true
 
   securitySchemes:
     jwt:
