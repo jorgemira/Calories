@@ -3,13 +3,12 @@ This is the users module and supports all the REST actions for the Users data
 """
 
 from flask import abort
-from marshmallow import INCLUDE
 
-from calories.main import db, logger
-from calories.main.controller.auth import is_allowed
-from calories.main.controller.helpers import get_user
-from calories.main.models.models import User, UserSchema, Role
-from calories.main.util.filters import apply_filter
+from calories.main import logger
+from calories.main.controller.helpers import RequestError
+from calories.main.controller.helpers.auth import is_allowed
+from calories.main.controller.helpers.users import get_users, get_user, crt_user, updt_user, dlt_user
+from calories.main.models.models import Role
 
 
 @is_allowed(roles_allowed=[Role.MANAGER])
@@ -26,11 +25,12 @@ def read_users(user, filter='', itemsPerPage=None, pageNumber=None):
     :type pageNumber: int
     :return: Success mesage with the list of users
     """
-    users = User.query.order_by(User.username)
-    users, pagination = apply_filter(users, filter, itemsPerPage, pageNumber)
-
-    user_schema = UserSchema(many=True, exclude=('id', '_password', 'meals'))
-    data = user_schema.dump(users)
+    try:
+        data, pagination = get_users(filter, itemsPerPage, pageNumber)
+    except RequestError as e:
+        data = pagination = None
+        logger.warn(e.message)
+        abort(e.code, e.message)
 
     logger.info(f"User: '{user}', read user list, filter: '{filter}', itemsPerPage: '{itemsPerPage}'"
                 f"pageNumber: '{pageNumber}'")
@@ -54,9 +54,12 @@ def read_user(user, username):
     :type username: str
     :return: Success message or 404 if user not found
     """
-    c_user = get_user(username)
-    user_schema = UserSchema(exclude=('id', '_password', 'meals'))
-    data = user_schema.dump(c_user)
+    try:
+        data = get_user(username)
+    except RequestError as e:
+        data = None
+        logger.warn(e.message)
+        abort(e.code, e.message)
 
     logger.info(f"User: '{user}' read user: '{username}'")
 
@@ -78,30 +81,12 @@ def create_user(user, body):
     :return: Succes message, 409 if user already exists, 403 if role is wrong, 400 if wrong username
     """
     username = body.get("username")
-    existing_user = User.query.filter(User.username == username).one_or_none()
-    owner = get_user(user)
-
-    if existing_user:
-        logger.warning(f"User: '{user}' with tried to create already existing user: '{username}'")
-        abort(409, f"User '{username}' exists already")
-
-    schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
-    new_user = schema.load(body, session=db.session)
-
-    if owner.role == Role.MANAGER and new_user.role != Role.USER:
-        logger.warning(f"User: '{user}' with role '{owner.role}' tried to create user: '{username}' with role "
-                       f"'{new_user.role}'")
-        abort(403, f"User '{user}' can only create users with role USER")
-
-    if not body['username'].isalnum():
-        logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with username "
-                       f"'{new_user.username}'")
-        abort(400, f"Username must contain only alphanumeric characters")
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    data = schema.dump(new_user)
+    try:
+        data = crt_user(user, username, body)
+    except RequestError as e:
+        data = None
+        logger.warn(e.message)
+        abort(e.code, e.message)
 
     logger.info(f"User: '{user}' created user: '{username}'")
 
@@ -124,28 +109,12 @@ def update_user(user, username, body):
     :type body: dict
     :return: Success message or 403 if there are role issues or 400 if the username is wrong
     """
-    u_user = get_user(username)
-    owner = get_user(user)
-
-    schema = UserSchema(exclude=('id', '_password', 'meals'), unknown=INCLUDE)
-    updated = schema.load(body, session=db.session)
-
-    if updated.role and updated.role != u_user.role and owner.role != Role.ADMIN:
-        logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with role "
-                       f"'{u_user.role}'")
-        abort(403, f"User '{user}' is not allowed to change Role")
-
-    if not body.get('username', 'a').isalnum():
-        logger.warning(f"User: '{user}' with role '{owner.role}' tried to update user: '{username}' with username "
-                       f"'{u_user.username}'")
-        abort(400, f"Username must contain only alphanumeric characters")
-
-    updated.id = u_user.id
-
-    db.session.merge(updated)
-    db.session.commit()
-
-    data = schema.dump(u_user)
+    try:
+        data = updt_user(user, username, body)
+    except RequestError as e:
+        data = None
+        logger.warn(e.message)
+        abort(e.code, e.message)
 
     logger.info(f"User: '{user}' updated user: '{username}'")
 
@@ -166,16 +135,11 @@ def delete_user(user, username):
     :type user: str
     :return: Success message or 404 if user not found
     """
-    d_user = get_user(username)
-    owner = get_user(user)
-
-    if owner.role == Role.MANAGER and d_user.role != Role.USER:
-        logger.warning(f"User: '{user}' with role '{owner.role}' failed to delete user: '{username}' with role "
-                       f"'{d_user.username}'")
-        abort(403, f"User '{user}' can only delete users with role USER")
-
-    db.session.delete(d_user)
-    db.session.commit()
+    try:
+        dlt_user(user, username)
+    except RequestError as e:
+        logger.warn(e.message)
+        abort(e.code, e.message)
 
     logger.info(f"User: '{user}' deleted user: '{username}'")
 
