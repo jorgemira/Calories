@@ -32,7 +32,7 @@ paths:
       summary: Create an user
       description: Create a new user
       requestBody:
-        $ref: '#/components/requestBodies/User'
+        $ref: '#/components/requestBodies/UserAllReq'
         description: User to create
         required: true
       responses:
@@ -146,7 +146,7 @@ paths:
       summary: Create a meal associated with an user
       description: Create a meal associated with an user
       requestBody:
-        $ref: '#/components/requestBodies/Meal'
+        $ref: '#/components/requestBodies/MealReq'
         description: Meal to update
         required: true
       responses:
@@ -295,9 +295,6 @@ components:
           format: password
           minLength: 6
           description: Password of the user
-      required:
-        - username
-        - password
       example:
         username: JohnDoe
         name: "John Doe"
@@ -448,6 +445,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
+
+    UserAllReq:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
             required:
               - username
               - name
@@ -461,13 +464,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Meal'
+
+    MealReq:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Meal'
             required:
-              - date
-              - time
               - name
-              - grams
-              - description
-              - calories
+              - date
 
     Login:
       content:

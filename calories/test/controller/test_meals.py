@@ -74,7 +74,7 @@ class TestMeals(TestAPI):
         with self.client:
             request_data = {'description': 'description', 'calories': 0}
             response = self.post(path, request_data, self._get_headers())
-            self._check_error(response, 400, 'Bad Request', "'date' is a required property")
+            self._check_error(response, 400, 'Bad Request', "'name' is a required property")
 
     def test_post_meal_wrong_params(self):
         """Wrongly formatted parameters"""
