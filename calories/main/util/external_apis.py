@@ -7,8 +7,8 @@ from calories.main import cfg, logger
 
 
 def calories_from_nutritionix(meal):
-    """
-    Query Nutritionix API to get the calories information of a meal
+    """Query Nutritionix API to get the calories information of a meal
+
     :param meal: Name of the meal
     :type meal: str
     :return: The calories of the specified meal

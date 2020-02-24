@@ -7,8 +7,8 @@ from werkzeug.exceptions import abort
 
 
 def to_fiql(filter_spec):
-    """
-    Transform a filter specification in out format to Fiql
+    """Transform a filter specification in out format to Fiql
+
     :param filter_spec:
     :type filter_spec: str
     :return:
@@ -30,8 +30,8 @@ def to_fiql(filter_spec):
 
 
 def to_sql_alchemy(filter_spec):
-    """
-    Transform a Fiql object into a SQLAlchemy filter expression
+    """Transform a Fiql object into a SQLAlchemy filter expression
+
     :param filter_spec: Fiql object containing the filter
     :type filter_spec: dict
     :return: The SQLAlchemy filter expression
@@ -54,8 +54,8 @@ def to_sql_alchemy(filter_spec):
 
 
 def apply_filter(query, filter_spec=None, page_size=10, page_number=1):
-    """
-    Apply filtering and pagination to any given query
+    """Apply filtering and pagination to any given query
+
     :param query: Query to apply filtering to
     :param filter_spec: Filter to apply to the query
     :type filter_spec: str
