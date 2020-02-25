@@ -290,6 +290,7 @@ components:
         daily_calories:
           type: integer
           description: Calories of the day for the user
+          minimum: 0
         password:
           type: string
           format: password
