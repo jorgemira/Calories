@@ -9,7 +9,7 @@ from jose import jwt
 from werkzeug.security import check_password_hash
 
 from calories.main import cfg, logger
-from calories.main.controller.helpers import Unauthorized
+from calories.main.controller.helpers import Unauthorized, RequestError
 from calories.main.controller.helpers.users import _get_user
 from calories.main.models.models import Role
 
@@ -27,10 +27,12 @@ def get_token(username, password):
     :rtype: str
     :raises Unauthorized: If the password is wrong
     """
-    user = _get_user(username)
-
-    if not check_password_hash(user.password, password):
-        raise Unauthorized(f"Wrong password for user '{username}'")
+    try:
+        user = _get_user(username)
+        if not check_password_hash(user.password, password):
+            raise Unauthorized
+    except RequestError:
+        raise Unauthorized(f"Invalid username/password")
 
     return encode_token(user.username)
 

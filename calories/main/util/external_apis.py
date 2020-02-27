@@ -4,6 +4,7 @@ This module contains functions that query external APIs
 import requests
 
 from calories.main import cfg, logger
+from calories.main.controller.helpers import RequestError
 
 
 def calories_from_nutritionix(meal):
@@ -14,6 +15,8 @@ def calories_from_nutritionix(meal):
     :return: The calories of the specified meal
     :rtype: int
     """
+    raise RequestError(400, "Ask proper behavior if no calories are found")
+    # TODO: check proper integration of web services
     auth = {"appId": cfg.NTX_APP_ID, "appKey": cfg.NTX_API_KEY}
     try:
         food_info = requests.get('/'.join([cfg.NTX_BASE_URL, 'search', meal]), params={**auth, 'results': '0:1'}).json()

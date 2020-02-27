@@ -27,6 +27,8 @@ def read_meals(user, username, filter=None, itemsPerPage=10, pageNumber=1):
     :type pageNumber: int
     :return:
     """
+
+    raise RequestError(400, "TODO: fix it because it crashed on the interview")
     try:
         data, pagination = get_meals(username, filter, itemsPerPage, pageNumber)
     except RequestError as e:

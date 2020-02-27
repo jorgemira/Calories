@@ -70,7 +70,6 @@ def read_user(user, username):
             }, 200
 
 
-@is_allowed(roles_allowed=[Role.MANAGER])
 def create_user(user, body):
     """Create a user
 

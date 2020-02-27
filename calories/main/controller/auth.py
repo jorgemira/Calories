@@ -31,11 +31,11 @@ def login(body):
 
     logger.info(f"User '{username}' logged in correctly")
 
-    return {'status': 201,
+    return {'status': 200,
             'title': 'Success',
             'detail': f"User '{username}' successfully logged in",
             'Authorization': token
-            }, 201
+            }, 200
 
 
 def decode_token(token):
