@@ -13,16 +13,13 @@ ADMNIN_USER = {
     "email": "admin@adminmail.com",
     "role": "ADMIN",
     "daily_calories": 0,
-    "meals": []
+    "meals": [],
 }
 
 
-def build_db():
-    """This function recreates the database, drops any existing version, creates a new one and adds the default admin
-    user
-
-    :rtype: None
-    """
+def build_db() -> None:
+    """This function recreates the database, drops any existing version, creates a new
+    one and adds the default admin user"""
     # Clean database
     db.drop_all()
     logger.info("Old database tables (if any) dropped")
@@ -40,11 +37,8 @@ def build_db():
     logger.info("Database built successfully")
 
 
-def populate_db():
-    """Populate the database using sample data
-
-    :rtype: None
-    """
+def populate_db() -> None:
+    """Populate the database using sample data"""
     users = [
         {
             "username": "user1",
@@ -71,8 +65,8 @@ def populate_db():
                     "description": "Meal 2 User 1",
                     "calories": 2100,
                     "under_daily_total": False,
-                }
-            ]
+                },
+            ],
         },
         {
             "username": "user2",
@@ -91,7 +85,7 @@ def populate_db():
                     "calories": 500,
                     "under_daily_total": True,
                 }
-            ]
+            ],
         },
         {
             "username": "manager1",
@@ -100,7 +94,7 @@ def populate_db():
             "email": "manager1@managermail.com",
             "role": "MANAGER",
             "daily_calories": 2000,
-            "meals": []
+            "meals": [],
         },
         {
             "username": "manager2",
@@ -109,29 +103,35 @@ def populate_db():
             "email": "manager2@managermail.com",
             "role": "MANAGER",
             "daily_calories": 4000,
-            "meals": []
+            "meals": [],
         },
     ]
     for user in users:
-        u = User(username=user.get('username'),
-                 password=user.get('password'),
-                 name=user.get('name'),
-                 email=user.get('email'),
-                 role=user.get('role'),
-                 daily_calories=user.get('daily_calories'))
-        for meal in user.get('meals'):
-            u.meals.append(Meal(user_id=meal.get(''),
-                                date=meal.get('date'),
-                                time=meal.get('time'),
-                                name=meal.get('name'),
-                                grams=meal.get('grams'),
-                                description=meal.get('description'),
-                                calories=meal.get('calories')))
+        u = User(
+            username=user.get("username"),
+            password=user.get("password"),
+            name=user.get("name"),
+            email=user.get("email"),
+            role=user.get("role"),
+            daily_calories=user.get("daily_calories"),
+        )
+        for meal in user.get("meals"):
+            u.meals.append(
+                Meal(
+                    user_id=meal.get(""),
+                    date=meal.get("date"),
+                    time=meal.get("time"),
+                    name=meal.get("name"),
+                    grams=meal.get("grams"),
+                    description=meal.get("description"),
+                    calories=meal.get("calories"),
+                )
+            )
         db.session.add(u)
         logger.info(f"User: '{user['username']}' added successfully to users")
 
     db.session.commit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     build_db()

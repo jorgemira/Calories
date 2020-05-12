@@ -5,157 +5,181 @@ This is the meals module and supports all the REST actions for the Meals data
 from flask import abort
 
 from calories.main import logger
+from calories.main.controller import ResponseType, RequestBodyType
 from calories.main.controller.helpers import RequestError
 from calories.main.controller.helpers.auth import is_allowed
-from calories.main.controller.helpers.meals import get_meals, get_meal, crt_meal, updt_meal, dlt_meals
+from calories.main.controller.helpers.meals import (
+    get_meals,
+    get_meal,
+    crt_meal,
+    updt_meal,
+    dlt_meals,
+)
 from calories.main.models.models import Role
 
 
 @is_allowed(roles_allowed=[Role.USER], only_allow_self=True)
-def read_meals(user, username, filter=None, itemsPerPage=10, pageNumber=1):
+def read_meals(
+        user: str,
+        username: str,
+        filter_results: str = None,
+        items_per_page: int = 10,
+        page_number: int = 1,
+) -> ResponseType:
     """Read the list of meals for a given user
 
     :param user: The user that requests the action
-    :type user: str
     :param username: User to return al his meals
-    :type username: str
-    :param filter: Filter string for the results
-    :type filter: str
-    :param itemsPerPage: Number of items of every page, defaults to 10
-    :type itemsPerPage: int
-    :param pageNumber: Page number of the results defaults to 1
-    :type pageNumber: int
-    :return:
+    :param filter_results: Filter string for the results
+    :param items_per_page: Number of items of every page, defaults to 10
+    :param page_number: Page number of the results defaults to 1
     """
 
-    raise RequestError(400, "TODO: fix it because it crashed on the interview")
     try:
-        data, pagination = get_meals(username, filter, itemsPerPage, pageNumber)
+        data, pagination = get_meals(
+            username, filter_results, items_per_page, page_number
+        )
     except RequestError as e:
         data = pagination = None
-        logger.warn(e.message)
+        logger.warning(e.message)
         abort(e.code, e.message)
 
-    logger.info(f"User: '{user}', read meals for user: '{username}', filter: '{filter}', itemsPerPage: '{itemsPerPage}'"
-                f"pageNumber: '{pageNumber}'")
+    logger.info(
+        f"User: '{user}', read meals for user: '{username}',"
+        f" filter: '{filter_results}', itemsPerPage: '{items_per_page}',"
+        f" pageNumber: '{page_number}'"
+    )
 
-    return {'status': 200,
-            'title': 'Success',
-            'detail': f"List of meals succesfully read for user: '{username}'",
-            'data': data,
-            'num_pages': pagination.num_pages,
-            'total_result': pagination.total_results
-            }, 200
+    return (
+        {
+            "status": 200,
+            "title": "Success",
+            "detail": f"List of meals succesfully read for user: '{username}'",
+            "data": data,
+            "num_pages": pagination.num_pages,
+            "total_result": pagination.total_results,
+        },
+        200,
+    )
 
 
 @is_allowed(roles_allowed=[Role.USER], only_allow_self=True)
-def read_meal(user, username, id):
+def read_meal(user: str, username: str, meal_id: int) -> ResponseType:
     """Read a meal that belongs to a user
 
     :param user: The user that requests the action
-    :type user: str
     :param username: Username to read his meal
-    :type username: str
-    :param id: Id of the meal
-    :type id: int
-    :return:
+    :param meal_id: Id of the meal
     """
     try:
-        data = get_meal(username, id)
+        data = get_meal(username, meal_id)
     except RequestError as e:
         data = None
-        logger.warn(e.message)
+        logger.warning(e.message)
         abort(e.code, e.message)
 
-    logger.info(f"User: '{user}' read meal: '{id}' of  user: '{username}'")
+    logger.info(f"User: '{user}' read meal: '{meal_id}' of  user: '{username}'")
 
-    return {'status': 200,
-            'title': 'Success',
-            'detail': f"Meal: '{id}' of  user: '{username}' succesfully read",
-            'data': data
-            }, 200
+    return (
+        {
+            "status": 200,
+            "title": "Success",
+            "detail": f"Meal: '{meal_id}' of  user: '{username}' succesfully read",
+            "data": data,
+        },
+        200,
+    )
 
 
 @is_allowed(roles_allowed=[Role.USER], only_allow_self=True)
-def create_meal(user, username, body):
+def create_meal(user: str, username: str, body: RequestBodyType) -> ResponseType:
     """Create a meal
 
     :param user: User that requests the action
-    :type user: str
     :param username: User whose meal is going to be created
-    :type username: str
     :param body: Information about the new meal
-    :type body: dict
-    :return: A success message if the meal was found or a 400 error if any parameter was wrong
+    :return: A success message if the meal was found or a 400 error
+    if any parameter was wrong
     """
     try:
         data = crt_meal(username, body)
     except RequestError as e:
         data = None
-        logger.warn(e.message)
+        logger.warning(e.message)
         abort(e.code, e.message)
 
-    logger.info(f"User: '{user}' created meal: '{data.get('id')}' for  user: '{username}'")
+    logger.info(
+        f"User: '{user}' created meal: '{data.get('id')}' for  user: '{username}'"
+    )
 
-    return {'status': 201,
-            'title': 'Success',
-            'detail': f"Meal: '{data.get('id')}' of  user: '{username}' succesfully created",
-            'data': data
-            }, 201
+    return (
+        {
+            "status": 201,
+            "title": "Success",
+            "detail": f"Meal: '{data.get('id')}' of  user: '{username}' "
+                      f"succesfully created",
+            "data": data,
+        },
+        201,
+    )
 
 
 @is_allowed(roles_allowed=[Role.USER], only_allow_self=True)
-def update_meal(user, username, id, body):
+def update_meal(
+        user: str, username: str, meal_id: int, body: RequestBodyType
+) -> ResponseType:
     """Update a meal
 
     :param user: User that requests the action
-    :type user: str
     :param username: User whose meal is going to be updated
-    :type username: str
-    :param id: Meal id to update
-    :type id: int
+    :param meal_id: Meal id to update
     :param body: New body of the updated meal
-    :type body: str
     :return: A success message if the meal was found or a 404 error if either the user or the meal does not exist
     """
     try:
-        data = updt_meal(username, id, body)
+        data = updt_meal(username, meal_id, body)
     except RequestError as e:
         data = None
-        logger.warn(e.message)
+        logger.warning(e.message)
         abort(e.code, e.message)
 
-    logger.info(f"User: '{user}' updated meal: '{id}' for  user: '{username}'")
+    logger.info(f"User: '{user}' updated meal: '{meal_id}' for  user: '{username}'")
 
-    return {'status': 200,
-            'title': 'Success',
-            'detail': f"Meal: '{id}' of  user: '{username}' succesfully updated",
-            'data': data
-            }, 200
+    return (
+        {
+            "status": 200,
+            "title": "Success",
+            "detail": f"Meal: '{meal_id}' of  user: '{username}' succesfully updated",
+            "data": data,
+        },
+        200,
+    )
 
 
 @is_allowed(roles_allowed=[Role.USER], only_allow_self=True)
-def delete_meal(user, username, id):
+def delete_meal(user: str, username: str, meal_id: int) -> ResponseType:
     """Delete a meal
 
     :param user: User that requests the action
-    :type user: str
     :param username: User whose meal is going to be deleted
-    :type username: str
-    :param id: Meal id to delete
-    :type id: int
-    :return: A success message if the meal was found or a 404 error if either the user or the meal does not exist
+    :param meal_id: Meal id to delete
+    :return: A success message if the meal was found or a 404 error if either the user
+     or the meal does not exist
     """
     try:
-        dlt_meals(username, id)
+        dlt_meals(username, meal_id)
     except RequestError as e:
-        logger.warn(e.message)
+        logger.warning(e.message)
         abort(e.code, e.message)
 
-    logger.info(f"User: '{user}' deleted meal: '{id}' for  user: '{username}'")
+    logger.info(f"User: '{user}' deleted meal: '{meal_id}' for  user: '{username}'")
 
-    return {'status': 200,
-            'title': 'Success',
-            'detail': f"Meal: '{id}' of  user: '{username}' succesfully deleted",
-            'data': None
-            }, 200
+    return (
+        {
+            "status": 200,
+            "title": "Success",
+            "detail": f"Meal: '{meal_id}' of  user: '{username}' succesfully deleted",
+            "data": None,
+        },
+        200,
+    )

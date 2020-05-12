@@ -19,41 +19,46 @@ class TestExternalAPIs(BaseTestCase):
 
     def test_filters_eq(self):
         """Test filtering eq operator"""
-        query, pagination = apply_filter(self.users, 'username eq user1')
+        query, pagination = apply_filter(self.users, "username eq user1")
         filtered = query.all()
         self.assertEqual(len(filtered), 1)
-        self.assertEqual(filtered[0].username, 'user1')
+        self.assertEqual(filtered[0].username, "user1")
         self.assertEqual(pagination.num_pages, 1)
         self.assertEqual(pagination.total_results, 1)
 
     def test_filters_ne(self):
         """Test filtering ne operator"""
-        query, pagination = apply_filter(self.users, 'username ne user1')
+        query, pagination = apply_filter(self.users, "username ne user1")
         filtered = query.all()
         self.assertEqual(len(filtered), 4)
-        self.assertEqual(filtered[0].username, 'admin')
-        self.assertEqual(filtered[1].username, 'manager1')
-        self.assertEqual(filtered[2].username, 'manager2')
-        self.assertEqual(filtered[3].username, 'user2')
+        self.assertEqual(filtered[0].username, "admin")
+        self.assertEqual(filtered[1].username, "manager1")
+        self.assertEqual(filtered[2].username, "manager2")
+        self.assertEqual(filtered[3].username, "user2")
         self.assertEqual(pagination.num_pages, 1)
         self.assertEqual(pagination.total_results, 4)
 
     def test_filters_and(self):
         """Test filtering and operator"""
-        query, pagination = apply_filter(self.users, "username ne 'user1' AND daily_calories lt 2000")
+        query, pagination = apply_filter(
+            self.users, "username ne 'user1' AND daily_calories lt 2000"
+        )
         filtered = query.all()
         self.assertEqual(len(filtered), 1)
-        self.assertEqual(filtered[0].username, 'admin')
+        self.assertEqual(filtered[0].username, "admin")
         self.assertEqual(pagination.num_pages, 1)
         self.assertEqual(pagination.total_results, 1)
 
     def test_filters_complex(self):
         """Test filtering with complex filter"""
-        query, pagination = apply_filter(self.users, "username ne 'user1' AND (daily_calories lt 3000 AND "
-                                                     "daily_calories gt 1000)")
+        query, pagination = apply_filter(
+            self.users,
+            "username ne 'user1' AND (daily_calories lt 3000 AND "
+            "daily_calories gt 1000)",
+        )
         filtered = query.all()
         self.assertEqual(len(filtered), 1)
-        self.assertEqual(filtered[0].username, 'manager1')
+        self.assertEqual(filtered[0].username, "manager1")
         self.assertEqual(pagination.num_pages, 1)
         self.assertEqual(pagination.total_results, 1)
 
@@ -80,8 +85,8 @@ class TestExternalAPIs(BaseTestCase):
         query, pagination = apply_filter(self.users, page_number=1, page_size=2)
         filtered = query.all()
         self.assertEqual(len(filtered), 2)
-        self.assertEqual(filtered[0].username, 'admin')
-        self.assertEqual(filtered[1].username, 'manager1')
+        self.assertEqual(filtered[0].username, "admin")
+        self.assertEqual(filtered[1].username, "manager1")
         self.assertEqual(pagination.num_pages, 3)
         self.assertEqual(pagination.total_results, 5)
 
@@ -90,8 +95,8 @@ class TestExternalAPIs(BaseTestCase):
         query, pagination = apply_filter(self.users, page_number=2, page_size=2)
         filtered = query.all()
         self.assertEqual(len(filtered), 2)
-        self.assertEqual(filtered[0].username, 'manager2')
-        self.assertEqual(filtered[1].username, 'user1')
+        self.assertEqual(filtered[0].username, "manager2")
+        self.assertEqual(filtered[1].username, "user1")
         self.assertEqual(pagination.num_pages, 3)
         self.assertEqual(pagination.total_results, 5)
 
@@ -100,7 +105,7 @@ class TestExternalAPIs(BaseTestCase):
         query, pagination = apply_filter(self.users, page_number=3, page_size=2)
         filtered = query.all()
         self.assertEqual(len(filtered), 1)
-        self.assertEqual(filtered[0].username, 'user2')
+        self.assertEqual(filtered[0].username, "user2")
         self.assertEqual(pagination.num_pages, 3)
         self.assertEqual(pagination.total_results, 5)
 
@@ -118,5 +123,5 @@ class TestExternalAPIs(BaseTestCase):
             apply_filter(self.users, page_number=0, page_size=2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

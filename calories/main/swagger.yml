@@ -165,7 +165,7 @@ paths:
       security:
         - jwt: []
 
-  /users/{username}/meals/{id}:
+  /users/{username}/meals/{meal_id}:
     parameters:
       - $ref: '#/components/parameters/UserName'
       - $ref: '#/components/parameters/MealId'
@@ -404,7 +404,7 @@ components:
       example: username1
 
     MealId:
-      name: id
+      name: meal_id
       in: path
       description: Id of meal
       required: true
@@ -414,7 +414,7 @@ components:
       example: 1
 
     Filter:
-      name: filter
+      name: filter_results
       in: query
       description: Filtering for results
       schema:
@@ -422,7 +422,7 @@ components:
       example: (field1 ne 'value1') OR ((field2 gt 0) AND (field2 lt 2000))
 
     ItemsPerPage:
-      name: itemsPerPage
+      name: items_per_page
       schema:
         type: integer
         minimum: 1
@@ -431,7 +431,7 @@ components:
       description: Items per page
 
     PageNumber:
-      name: pageNumber
+      name: page_number
       schema:
         type: integer
         minimum: 1

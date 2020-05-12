@@ -10,20 +10,20 @@ from calories.main import db, ma
 
 
 class Role(str, Enum):
-    """
-    Enum for Role types
-    """
-    USER = 'USER'
-    MANAGER = 'MANAGER'
-    ADMIN = 'ADMIN'
+    """Enum for Role types"""
+
+    USER = "USER"
+    MANAGER = "MANAGER"
+    ADMIN = "ADMIN"
 
 
 class User(db.Model):
     """Database Model Class for users"""
+
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True)
-    _password = db.Column('password', db.String(128))
+    _password = db.Column("password", db.String(128))
     name = db.Column(db.String(128))
     email = db.Column(db.String(128))
     role = db.Column(db.Enum(Role))
@@ -40,12 +40,13 @@ class User(db.Model):
         return self._password
 
     @password.setter
-    def password(self, plaintext):
+    def password(self, plaintext: str):
         self._password = generate_password_hash(plaintext)
 
 
 class Meal(db.Model):
     """Database Model Class for meals"""
+
     __tablename__ = "meal"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
