@@ -1,6 +1,5 @@
 # Calories REST API
-REST API for the input of calories, Project for Toptal interview of Jorge Mira Yague
-
+REST API for the input of calories
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing 
 purposes. 
