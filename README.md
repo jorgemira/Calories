@@ -16,7 +16,7 @@ not been tested
 ## Installing 
 First of all, clone the repository and move to it
 ```shell script
-git clone git@git.toptal.com:screening/jorge-mira-yague.git
+git clone git@github.com:jorgemira/Calories.git 
 cd jorge-mira-yague
 ```
 On a production environment there is no need to install some dependencies, the following command is issued to install
